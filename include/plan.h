@@ -4,10 +4,12 @@
 #include "jpeg_reader.h"
 
 
-extern uint16_t get_ind(struct bitstream *stream, uint32_t nb_bits);
-extern int32_t trad_DC(struct bitstream *stream, int32_t prec, struct jpeg_desc *jpeg);
-extern int32_t trad_AC(struct bitstream *stream, uint16_t *indice, uint32_t *tab);
-extern int valeur_magnitude(uint8_t magnitude, uint16_t);
+extern uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits);
+extern int32_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg);
+extern int32_t trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg);
+extern int32_t valeur_magnitude(uint8_t magnitude, uint16_t);
+
+
 
 /// en gros pour le moment on s'occupe de la traduction du flux de bits en un tableau auquel il faudra appliquer la tf inverse
 
