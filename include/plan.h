@@ -6,9 +6,15 @@
 
 extern uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits);
 extern int32_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg);
-extern int32_t trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg);
+extern struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg);
 extern int32_t valeur_magnitude(uint8_t magnitude, uint16_t);
+extern int32_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg);
 
+struct symbole_AC {
+  int EOB;
+  int8_t nb_zeros;
+  int32_t valeur;
+};
 
 
 /// en gros pour le moment on s'occupe de la traduction du flux de bits en un tableau auquel il faudra appliquer la tf inverse
