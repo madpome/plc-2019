@@ -1,6 +1,6 @@
 
 
-#include "../include/zigzag.h" 
+#include "../include/zigzag.h"
 //Transforme un vecteur 1x64 en un bloc 8x8 avec la méthode du zigzag inversé
 
 int32_t ** zigzag_to_array(int32_t * zigzag){
@@ -42,7 +42,7 @@ void pixels_to_ppm(RGB **pixels, int largeur, int hauteur,int noir_et_blanc, con
     }
     fclose(f);
 }
-int main(int argc, char ** argv){
+/*int main(int argc, char ** argv){
     uint8_t n = 25;
     RGB **pixels = malloc(8*sizeof(RGB *));
     for(int i = 0;i<8;i++){
@@ -52,4 +52,4 @@ int main(int argc, char ** argv){
     }
     pixels_to_ppm(pixels, 1, 8, 1, "test");
 
-}
+}*/

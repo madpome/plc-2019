@@ -1,5 +1,7 @@
-#include "../include/idct.h" 
+#include "../include/idct.h"
+#include <math.h>
 #define C(x) ((x==0)?(1/sqrt(2)):1)
+#define PI 3.14159265359
 // A COMPILER AVEC -lm
 float ** naive_idct(int32_t **frequence, float ** table_cos){
     float **tab = malloc(8*sizeof(float*));
@@ -26,7 +28,7 @@ float **cos_table(){
     for(int i =0;i<8;i++){
         for(int j = 0;j<8;j++){
             //table_cos[i][j] = cos((2i+1)*j*pi/16)
-            table_cos[i][j] = cos((2*i+1)*j*M_PI/16);
+            table_cos[i][j] = cos((2*i+1)*j*PI/16);
         }
     }
     return table_cos;

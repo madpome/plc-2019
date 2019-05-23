@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/huffman.h"
-#include "../include/plan.h"
+#include "../include/decomp.h"
 #include "../include/bitstream.h"
 
 /* lit les 4 bits de poids fort d'un octet et renvoie l'entier correspondant */
@@ -71,8 +71,9 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
 }
 
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
+//TODO AFREE
 int32_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
-  int32_t bloc[64];
+  int32_t *bloc = malloc(64*sizeof(int32_t));
   bloc[0] = trad_DC(stream,jpeg);
 
   int i = 1;
@@ -92,8 +93,11 @@ int32_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
 }
 
 
-int main(int argc, char *argv[]){
+/*int main(int argc, char *argv[]){
+	if(argc!=3){
+		return -1;
+	}
 	printf("%i\n",atoi(argv[1]));
 	printf("%i\n",valeur_magnitude(atoi(argv[1]),atoi(argv[2])));
 	printf("%i\n", read_low(50));
-}
+}*/

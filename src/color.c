@@ -1,4 +1,4 @@
-#include "../include/color.h" 
+#include "../include/color.h"
 
 struct RGB ycbcr_to_rgb(float Y, float C_r, float C_b){
     RGB rgb;
@@ -14,4 +14,5 @@ struct RGB ycbcr_to_rgb(float Y, float C_r, float C_b){
     a = (a<0)?0:a;
     a = (a>255)?255:a;
     rgb.B = (uint8_t ) a;
+    return rgb;
 }

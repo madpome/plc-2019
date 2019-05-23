@@ -1,10 +1,6 @@
-#include "../include/bitstream.h"
-#include "../include/idct.h"
-#include "../include/jpeg_reader.h"
-#include "../include/decomp.h"
-#include "../include/zigzag.h"
-#include "../include/quant_inv.h"
-#include "../include/color.h"
+
+#include "jpeg_reader.h"
+
 
 
 
@@ -19,14 +15,6 @@ int main(int argc, char **argv){
         fprintf(stderr, "Problème lors de l'ouverture du fichier %s\n", argv[1]);
         return 1;
     }
-
-    float **table_cos = cos_table();
-    struct bitstream *stream = get_bitstream(jpeg);
-    uint8_t *quant_table = get_quantization_table(jpeg,0);
-    int32_t *bloc = trad_bloc(stream, jpeg);
-    int32_t ** frequence = quant_inv(bloc,quant_table);
-    float **tab = naive_idct(frequence, table_cos);
-
     /*TODO
         get bitstream du jpeg pour travailler dessus
         Faut il extraire en avance toutes les tables ou on le fait que quand on
