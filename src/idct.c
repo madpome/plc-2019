@@ -1,6 +1,4 @@
-#include <math.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include "../include/idct.h" 
 #define C(x) ((x==0)?(1/sqrt(2)):1)
 // A COMPILER AVEC -lm
 float ** naive_idct(int32_t **frequence, float ** table_cos){

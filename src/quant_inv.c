@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include "zigzag.c"
+#include "../include/quant_inv.h"
 //Quantification inverse
 //Les types des trucs en entrée et retournés seront à verifier
 int32_t ** quant_inv(int32_t *bloc, uint8_t *quant_table){
@@ -12,3 +11,5 @@ int32_t ** quant_inv(int32_t *bloc, uint8_t *quant_table){
 }
 //A la sortie, on devrait avor un bloc 8x8 contenant les blocs
 //de fréquence initiaux
+ 
+ 

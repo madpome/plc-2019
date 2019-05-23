@@ -1,9 +1,6 @@
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include "../include/color.h"
+
+#include "../include/zigzag.h" 
 //Transforme un vecteur 1x64 en un bloc 8x8 avec la méthode du zigzag inversé
 
 int32_t ** zigzag_to_array(int32_t * zigzag){

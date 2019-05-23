@@ -1,5 +1,10 @@
-
+#include "../include/bitstream.h"
+#include "../include/huffman.h"
+#include "../include/idct.h"
 #include "../include/jpeg_reader.h"
+#include "../include/decomp.h"
+#include "../include/zigzag.h"
+#include "../include/quant_inv.h"
 
 
 
