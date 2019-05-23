@@ -5,7 +5,7 @@
 #include "../include/decomp.h"
 #include "../include/zigzag.h"
 #include "../include/quant_inv.h"
-
+#include "../include/color.h"
 
 
 
