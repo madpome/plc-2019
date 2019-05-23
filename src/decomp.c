@@ -42,7 +42,7 @@ uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits){
 
 
 /* le stream doit être positionné au début d'un symbole DC, lit le symbole et renvoie la valeur associée */
-int8_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg){
+int32_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg){
 	struct huff_table *huffman = get_huffman_table(jpeg, DC, 0);
 	int8_t magnitude = next_huffman_value(huffman, stream);
 	uint16_t indice = get_indice(stream, magnitude);
