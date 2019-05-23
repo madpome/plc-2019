@@ -18,7 +18,7 @@ float ** naive_idct(int32_t **frequence, float ** table_cos){
     return tab;
 }
 
-int main(int argc, char ** argv){
+float **cos_table(){
     float **table_cos = malloc(8*sizeof(float*));
     for(int i =0;i<8;i++){
         table_cos[i] = malloc(8*sizeof(float));
@@ -29,4 +29,5 @@ int main(int argc, char ** argv){
             table_cos[i][j] = cos((2*i+1)*j*M_PI/16);
         }
     }
+    return table_cos;
 }
