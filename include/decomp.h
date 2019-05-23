@@ -1,3 +1,6 @@
+#ifndef __DECOMP_H__
+#define __DECOMP_H__
+
 #include <stdint.h>
 #include "huffman.h"
 #include "bitstream.h"
@@ -30,3 +33,4 @@ struct symbole_AC {
 
 ///trad_block traduit entièrement un bloc (MCU)
 ///elle renvoie donc un tableau de flottant de taille 64 (8*8) tant qu'on fait des MCU de taille 8*8
+#endif

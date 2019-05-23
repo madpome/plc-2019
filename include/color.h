@@ -1,3 +1,6 @@
+#ifndef __COLOR_H__
+#define __COLOR_H__
+
 #include <stdint.h>
 
 
@@ -9,3 +12,4 @@ typedef struct RGB{
 }RGB;
 
 extern struct RGB ycbcr_to_rgb(float Y, float C_r, float C_b);
+#endif

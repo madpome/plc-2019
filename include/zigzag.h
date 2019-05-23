@@ -1,3 +1,6 @@
+#ifndef __ZIGZAG_H__
+#define __ZIGZAG_H__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -7,3 +10,4 @@
 extern int32_t ** zigzag_to_array(int32_t * zigzag);
 
 extern void pixel_to_ppm(RGB);
+#endif
