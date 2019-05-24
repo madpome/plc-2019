@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-
+#include <math.h>
 typedef struct RGB{
     //Si l'image est en noir et blanc, on met le niveau de gris dans la composante R
     uint8_t R;

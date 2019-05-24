@@ -3,7 +3,7 @@
 #define C(x) ((x==0)?(1/sqrt(2)):1)
 #define PI 3.14159265359
 // A COMPILER AVEC -lm
-float ** naive_idct(int32_t **frequence, float ** table_cos){
+float ** naive_idct(int16_t **frequence, float ** table_cos){
     float **tab = malloc(8*sizeof(float*));
     for(int i =0;i<8;i++){
         tab[i] = malloc(8*sizeof(float));

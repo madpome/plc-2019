@@ -36,13 +36,13 @@ int32_t valeur_magnitude(uint8_t magnitude, uint16_t indice){
 /* le stream doit être positionné juste après un symbole huffman, lit le bon nombre de bits et renvoie la valeur de l'indice associée */
 uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits){
 	uint32_t dest;
-	read_bitstream(stream, nb_bits, &dest, false);
-	return dest;
+	read_bitstream(stream, nb_bits, &dest, true);
+	return (uint16_t)dest;
 }
 
 
 /* le stream doit être positionné au début d'un symbole DC, lit le symbole et renvoie la valeur associée */
-int32_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg){
+int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg){
 	struct huff_table *huffman = get_huffman_table(jpeg, DC, 0);
 	int8_t magnitude = next_huffman_value(huffman, stream);
 	uint16_t indice = get_indice(stream, magnitude);
@@ -57,13 +57,14 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
   int8_t magnitude = read_low(octet);
   if (magnitude == 0){
       if (nb_zeros == 15){
-		  struct symbole_AC retour = {0,nb_zeros,0};
-		  return retour;
-	  }
+	     struct symbole_AC retour = {0,nb_zeros,0};
+	     return retour;
+      }
       if (nb_zeros == 0){
-		  struct symbole_AC retour = {1,0,0};
-		  return retour;
-	  }
+	//	printf("end of block\n");
+	     struct symbole_AC retour = {1,0,0};
+	     return retour;
+      }
   }
   uint16_t indice = get_indice(stream, magnitude);
   struct symbole_AC retour = {0,nb_zeros, valeur_magnitude(magnitude, indice)};
@@ -72,8 +73,8 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
 
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
 //TODO AFREE
-int32_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
-  int32_t *bloc = malloc(64*sizeof(int32_t));
+int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
+  int16_t *bloc = malloc(64*sizeof(int16_t));
   bloc[0] = trad_DC(stream,jpeg);
 
   int i = 1;
@@ -81,9 +82,13 @@ int32_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
   while (!symbole.EOB){
       for (int j =0; j<symbole.nb_zeros; j++, i++){
 	  	bloc[i] = 0;
-	  }
+		//	printf("i %d\n",i);
+      }
+      // printf("i = %d\n",i);
       bloc[i] = symbole.valeur;
       symbole = trad_AC(stream,jpeg);
+      // printf("%x\n", symbole.valeur);
+      i++;
   }
 
   for (int j = i; j <= 63-i; j++){

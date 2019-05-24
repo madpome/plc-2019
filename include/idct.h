@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-extern float ** naive_idct(int32_t **fequence, float ** table_cos);
+extern float ** naive_idct(int16_t **fequence, float ** table_cos);
 extern float ** cos_table();
 #endif
 

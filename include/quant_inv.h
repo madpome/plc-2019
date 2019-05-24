@@ -3,5 +3,5 @@
 
 #include "../include/zigzag.h"
 
-extern int32_t ** quant_inv(int32_t *bloc, uint8_t *quant_table);
+extern int16_t ** quant_inv(int16_t *bloc, uint8_t *quant_table);
 #endif

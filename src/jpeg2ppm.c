@@ -22,8 +22,16 @@ int main(int argc, char **argv){
     float **table_cos = cos_table();
     struct bitstream *stream = get_bitstream(jpeg);
     uint8_t *quant_table = get_quantization_table(jpeg,0);
-    int32_t *bloc = trad_bloc(stream, jpeg);
-    int32_t ** frequence = quant_inv(bloc,quant_table);
+    int16_t *bloc = trad_bloc(stream, jpeg);
+    int16_t ** frequence = quant_inv(bloc,quant_table);
+    for(int i =0;i<8;i++){
+      for(int j =0;j<8;j++){
+	printf("%x ",(uint16_t)frequence[i][j]);
+
+
+      }
+     }
+    printf("\n");
     float **tab = naive_idct(frequence, table_cos);
     RGB **gris = ycbcr_to_gris(tab);
     pixels_to_ppm(gris,8,8,1,argv[1]);

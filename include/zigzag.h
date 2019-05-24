@@ -7,7 +7,7 @@
 #include <string.h>
 #include "color.h"
 
-extern int32_t ** zigzag_to_array(int32_t * zigzag);
+extern int16_t ** zigzag_to_array(int16_t * zigzag);
 
 extern void pixels_to_ppm(RGB **pixels, int largeur, int hauteur, int noir_et_blanc, const char *filename);
 #endif
