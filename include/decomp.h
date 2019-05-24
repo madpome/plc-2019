@@ -12,6 +12,7 @@ extern int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg);
 extern struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg);
 extern int32_t valeur_magnitude(uint8_t magnitude, uint16_t);
 extern int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg);
+extern int16_t **trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v);
 
 struct symbole_AC {
   int EOB;

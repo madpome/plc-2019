@@ -97,6 +97,18 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
   return bloc;
 }
 
+int16_t **trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
+  int16_t **image = malloc(nb_bloc_h*nb_bloc_v*64*sizeof(int16_t));
+  for (int j = 0; j< nb_bloc_v;j++)
+    {
+      for (int i = 0; i< nb_bloc_h; i++)
+	{
+	  image[i][j] = *trad_bloc(stream,jpeg);
+	}
+    }
+  
+  return image;
+}
 
 /*int main(int argc, char *argv[]){
 	if(argc!=3){
