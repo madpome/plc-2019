@@ -26,11 +26,14 @@ int main(int argc, char **argv){
     int32_t *bloc = trad_bloc(stream, jpeg);
     int32_t ** frequence = quant_inv(bloc,quant_table);
     float **tab = naive_idct(frequence, table_cos);
-    
+    RGB **gris = ycbcr_to_gris(tab); 
+    pixels_to_ppm(gris,8,8,1,argv[1]);
+
+    /*free ALAIDE
     /*TODO
         get bitstream du jpeg pour travailler dessus
         Faut il extraire en avance toutes les tables ou on le fait que quand on
-        en a besoin ?
+        en a besoin ?  
         decompression(jpeg)
     */
     close_jpeg(jpeg);

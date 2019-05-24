@@ -15,3 +15,16 @@ struct RGB ycbcr_to_rgb(float Y, float C_r, float C_b){
     a = (a>255)?255:a;
     rgb.B = (uint8_t ) a;
 }
+
+RGB **ycbcr_to_gris(float **tab){
+  RGB **rgb = malloc(8*sizeof(RGB *));
+  for(int i =0;i<8;i++){
+    rgb[i] = malloc(8*sizeof(RGB));
+  }
+  for(int i = 0;i<8;i++){
+    for(int j = 0;j<8;j++){
+      rgb[i][j].R = (uint8_t) tab[i][j];
+    }
+  }
+  return rgb;
+}

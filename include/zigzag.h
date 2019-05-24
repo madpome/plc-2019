@@ -9,5 +9,5 @@
 
 extern int32_t ** zigzag_to_array(int32_t * zigzag);
 
-extern void pixel_to_ppm(RGB);
+extern void pixels_to_ppm(RGB **pixels, int largeur, int hauteur, int noir_et_blanc, const char *filename);
 #endif
