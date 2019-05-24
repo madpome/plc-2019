@@ -15,7 +15,8 @@ int main(int argc, char **argv){
     }
 
     struct jpeg_desc *jpeg = read_jpeg(argv[1]);
-    if(jpeg == NULL){
+    if(jpeg == NULL)
+    {
         fprintf(stderr, "Problème lors de l'ouverture du fichier %s\n", argv[1]);
         return 1;
     }
@@ -26,27 +27,32 @@ int main(int argc, char **argv){
     uint16_t vertical = get_image_size(jpeg,DIR_V);
     uint16_t nb_bloc_h = horizontal/8;
     uint16_t nb_bloc_v = vertical/8;
-    
+
     int16_t **image = trad_image(stream, jpeg,nb_bloc_h,nb_bloc_v);
     float **image_freq = malloc(nb_bloc_h*nb_bloc_v*64*sizeof(float));
     for (int j = 0; j<nb_bloc_v;j++)
-      {
-	for (int i =0; i<nb_bloc_h;i++)
-	  {
-	    image[i][j] = **quant_inv(&image[i][j], quant_table);
-	    image_freq[i][j] = **naive_idct(image[i][j], table_cos);
-	  }
-      }
-    int16_t ** frequence = quant_inv(bloc,quant_table);
-    float **tab = naive_idct(frequence, table_cos);
-    RGB **gris = ycbcr_to_gris(tab);
-    pixels_to_ppm(gris,8,8,1,argv[1]);
+    {
+	       for (int i =0; i<nb_bloc_h;i++)
+	       {
+	          image[i][j] = **quant_inv(&image[i][j], quant_table);
+	          image_freq[i][j] = **naive_idct(&image[i][j], table_cos);
+            image[i][j] = ycbcr_to_gris(&image_freq[i][j]);
+            /* Faut convertir en ppm */
+	       }
+    }
+
+    /* Pour 1 seul bloc */
+    // int16_t ** frequence = quant_inv(bloc,quant_table);
+    // float **tab = naive_idct(frequence, table_cos);
+    // RGB **gris = ycbcr_to_gris(tab);
+    // pixels_to_ppm(gris,8,8,1,argv[1]);
+
 
     /*free ALAIDE */
     /*TODO
         get bitstream du jpeg pour travailler dessus
         Faut il extraire en avance toutes les tables ou on le fait que quand on
-        en a besoin ?  
+        en a besoin ?
         decompression(jpeg)
     */
     close_jpeg(jpeg);
