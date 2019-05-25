@@ -103,8 +103,8 @@ int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t
       image[i] = malloc(nb_bloc_v*sizeof(int16_t *));
     }
   
-  for (int j = 0; j< nb_bloc_v;j++){
-      for (int i = 0; i< nb_bloc_h; i++){
+  for (int i = 0; i< nb_bloc_h; i++){
+    for (int j = 0; j< nb_bloc_v;j++){
 	  image[i][j] = trad_bloc(stream,jpeg);
 	}
     }

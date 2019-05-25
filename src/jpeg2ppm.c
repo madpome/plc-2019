@@ -28,18 +28,25 @@ int main(int argc, char **argv){
     uint16_t nb_bloc_h = horizontal/8;
     uint16_t nb_bloc_v = vertical/8;
 
-    int16_t **image = trad_image(stream, jpeg,nb_bloc_h,nb_bloc_v);
-    float **image_freq = malloc(nb_bloc_h*sizeof(float *));
+    int16_t ***image = trad_image(stream, jpeg,nb_bloc_h,nb_bloc_v);
+    int16_t ****image_quant = malloc(nb_bloc_h*sizeof(float ***));
     for (int i =0; i<nb_bloc_h;i++){
-	image_freq[i] = malloc(nb_bloc_v*sizeof(float));
+	image_quant[i] = malloc(nb_bloc_v*sizeof(float **));
+    float ****image_freq = malloc(nb_bloc_h*sizeof(float ***));
+    for (int i =0; i<nb_bloc_h;i++){
+	image_freq[i] = malloc(nb_bloc_v*sizeof(float **));
       }
+    struct RGB ****image_gris = malloc(nb_bloc_h*sizeof(float ***));
+    for (int i =0; i<nb_bloc_h;i++){
+      image_gris[i] = malloc(nb_bloc_v*sizeof(float **));
+    }
     
     for (int j = 0; j<nb_bloc_v;j++){
 	       for (int i =0; i<nb_bloc_h;i++)
 	       {
-	          image[i][j] = **quant_inv(&image[i][j], quant_table);
-	          image_freq[i][j] = **naive_idct(image[i][j], table_cos);
-            image[i][j] = ycbcr_to_gris(&image_freq[i][j]);
+	          image_quant[i][j] = quant_inv(image[i][j], quant_table);
+	          image_freq[i][j] = naive_idct(image_quant[i][j], table_cos);
+		  image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
             /* Faut convertir en ppm */
 	       }
     }
