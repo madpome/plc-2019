@@ -28,7 +28,6 @@ int32_t valeur_magnitude(uint8_t magnitude, uint16_t indice){
 	}else{
 		return -(1<<magnitude) +1 +indice;
 	}
-
 }
 
 
@@ -41,11 +40,11 @@ uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits){
 
 
 /* le stream doit être positionné au début d'un symbole DC, lit le symbole et renvoie la valeur associée */
-int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg,int16_t *prec){
+int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec){
 	struct huff_table *huffman = get_huffman_table(jpeg, DC, 0);
 	int8_t magnitude = next_huffman_value(huffman, stream);
 	uint16_t indice = get_indice(stream, magnitude);
-	return valeur_magnitude(magnitude, indice)+*prec;
+	return valeur_magnitude(magnitude, indice) + *prec;
 }
 
 /* le stream doit être positionné au début d'un symbole AC, lit le symbole et renvoie le nombre de 0 le précédent, la valeur associée, ou bien EOB */
@@ -76,11 +75,11 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
 //TODO AFREE
 
-int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg,int16_t *prec){
+int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec){
 	/* Création du bloc */
   int16_t *bloc = calloc(64, sizeof(int16_t));
   bloc[0] = trad_DC(stream,jpeg,prec);
-  *prec = bloc[0];
+
   int i = 1;
 
 	/* Lecture des 63 AC */
@@ -102,8 +101,10 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg,int16_t *pre
 //a free
 /* Créer un tableau dont chaque case et un bloc de 8x8 */
 int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
-  int16_t *prec = calloc(1,sizeof(int16_t));
-	/* Initialisation de l'image */ 
+
+	int16_t *prec = calloc(1, sizeof(int16_t));
+
+	/* Initialisation de l'image */
   int16_t ***image = malloc(nb_bloc_v*sizeof(int16_t **));
   for (int i=0; i<nb_bloc_v; i++){
     image[i] = malloc(nb_bloc_h*sizeof(int16_t *));
@@ -113,6 +114,7 @@ int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t
   for (int i = 0; i< nb_bloc_v; i++){
     for (int j = 0; j< nb_bloc_h;j++){
       image[i][j] = trad_bloc(stream,jpeg,prec);
+			*prec = image[i][j][0];
     }
   }
   return image;
