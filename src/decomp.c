@@ -87,13 +87,13 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
 		if (symbole.EOB == 1){
 			break;
 		}
-	  printf("nb zero %d\n", symbole.nb_zeros);
-      for (int j =0; j<symbole.nb_zeros; j++, i++){
-	  	bloc[i] = 0;
+		printf("nb zero %d\n", symbole.nb_zeros);
+		for (int j =0; j<symbole.nb_zeros; j++, i++){
+		  bloc[i] = 0;
 		//	printf("i %d\n",i);
-      }
+		}
       // printf("i = %d\n",i);
-	  printf("ici = %d\n",i);
+      printf("ici = %d\n",i);
       bloc[i] = symbole.valeur;
       symbole = trad_AC(stream,jpeg);
       // printf("%x\n", symbole.valeur);
