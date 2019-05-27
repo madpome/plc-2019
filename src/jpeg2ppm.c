@@ -22,7 +22,7 @@ int main(int argc, char **argv){
     }
 
     /* On récupère toutes les tables et les données de l'image */
-    float **table_cos = cos_table();
+    //float **table_cos = cos_table();
     struct bitstream *stream = get_bitstream(jpeg);
     uint8_t *quant_table = get_quantization_table(jpeg,0);
     uint16_t horizontal = get_image_size(jpeg,DIR_H);
@@ -52,14 +52,39 @@ int main(int argc, char **argv){
     for (int i = 0; i<nb_bloc_v;i++){
 	     for (int j =0; j<nb_bloc_h;j++){
 	        image_quant[i][j] = quant_inv(image[i][j], quant_table);
-	        image_freq[i][j] = naive_idct(image_quant[i][j], table_cos);
-		      image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
+	        image_freq[i][j] = idct(image_quant[i][j]);//naive_idct(image_quant[i][j], table_cos);
+		    image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
 	     }
     }
 
-    /* On transforme le tableau de blocs en image de pixels */ 
+    /* On transforme le tableau de blocs en image de pixels */
     struct RGB **immondice = bloc2array(image_gris,nb_bloc_h,nb_bloc_v, horizontal, vertical);
     pixels_to_ppm(immondice,horizontal,vertical,1,argv[1]);
+    for(int i =0;i<vertical;i++){
+        free(immondice[i]);
+    }
+    free(immondice);
+    for(int i =0;i<nb_bloc_v;i++){
+        for(int j=0;j<nb_bloc_h;j++){
+            for(int a = 0;a<8;a++){
+                free(image_gris[i][j][a]);
+                free(image_freq[i][j][a]);
+                free(image_quant[i][j][a]);
+            }
+            free(image_gris[i][j]);
+            free(image_freq[i][j]);
+            free(image_quant[i][j]);
+            free(image[i][j]);
+        }
+        free(image_gris[i]);
+        free(image_freq[i]);
+        free(image_quant[i]);
+        free(image[i]);
+    }
+    free(image_gris);
+    free(image_freq);
+    free(image_quant);
+    free(image);
 
     /* Pour 1 seul bloc */
     // int16_t ** frequence = quant_inv(bloc,quant_table);

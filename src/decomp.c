@@ -10,7 +10,7 @@ uint8_t read_high(uint8_t octet){
 	/* mask = 0b11110000 */
 	///int8_t mask = -16;
 	/* décalage de 4 pour bien récupérer la valeur */
-	return octet>>4;
+	return (octet>>4) & 0xF;
 }
 
 /* lit les 4 bits de poids failbe d'un octet et renvoie l'entier correspondant*/
@@ -103,7 +103,7 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg,int16_t *pre
 /* Créer un tableau dont chaque case et un bloc de 8x8 */
 int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
   int16_t *prec = calloc(1,sizeof(int16_t));
-	/* Initialisation de l'image */ 
+	/* Initialisation de l'image */
   int16_t ***image = malloc(nb_bloc_v*sizeof(int16_t **));
   for (int i=0; i<nb_bloc_v; i++){
     image[i] = malloc(nb_bloc_h*sizeof(int16_t *));
@@ -115,6 +115,7 @@ int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t
       image[i][j] = trad_bloc(stream,jpeg,prec);
     }
   }
+  free(prec);
   return image;
 }
 

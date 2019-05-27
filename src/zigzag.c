@@ -16,6 +16,7 @@ int16_t ** zigzag_to_array(int16_t * zigzag){
             tab[i][j] = zigzag[tabi[8*i+j]];
         }
     }
+    free(zigzag);
     return tab;
 }
 
@@ -40,6 +41,7 @@ void pixels_to_ppm(RGB **pixels, int largeur, int hauteur,int noir_et_blanc, con
             }
         }
     }
+    free(s);
     fclose(f);
 }
 /*int main(int argc, char ** argv){
