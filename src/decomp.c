@@ -79,11 +79,14 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
 //TODO AFREE
 int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
-  int16_t *bloc = malloc(64*sizeof(int16_t));
+  int16_t *bloc = calloc(64, sizeof(int16_t));
   bloc[0] = trad_DC(stream,jpeg);
   int i = 1;
   struct symbole_AC symbole = trad_AC(stream,jpeg);
-  while (symbole.EOB != 1){
+  while (i < 64){
+		if (symbole.EOB == 1){
+			break;
+		}
 	  printf("nb zero %d\n", symbole.nb_zeros);
       for (int j =0; j<symbole.nb_zeros; j++, i++){
 	  	bloc[i] = 0;
