@@ -32,6 +32,7 @@ int main(int argc, char **argv){
     int16_t ****image_quant = malloc(nb_bloc_h*sizeof(float ***));
     for (int i =0; i<nb_bloc_h;i++){
 	image_quant[i] = malloc(nb_bloc_v*sizeof(float **));
+    }
     float ****image_freq = malloc(nb_bloc_h*sizeof(float ***));
     for (int i =0; i<nb_bloc_h;i++){
 	image_freq[i] = malloc(nb_bloc_v*sizeof(float **));
@@ -50,7 +51,9 @@ int main(int argc, char **argv){
             /* Faut convertir en ppm */
 	       }
     }
-
+    struct RGB **immondice = bloc2array(image_gris,nb_bloc_h,nb_bloc_v, horizontal, vertical);
+    pixels_to_ppm(immondice,horizontal,vertical,1,argv[1]);
+    
     /* Pour 1 seul bloc */
     // int16_t ** frequence = quant_inv(bloc,quant_table);
     // float **tab = naive_idct(frequence, table_cos);

@@ -54,16 +54,17 @@ void pixels_to_ppm(RGB **pixels, int largeur, int hauteur,int noir_et_blanc, con
 
 }*/
 
-struct RGB **bloc2array(struct RGB ****bigarray,uint16_t horizontal,uint16_t vertical){
+struct RGB **bloc2array(struct RGB ****bigarray,uint16_t nb_bloc_h,uint16_t nb_bloc_v,uint16_t horizontal, uint16_t vertical){
 
   struct RGB **array = malloc(horizontal*sizeof(struct RGB *));
   for (int i =0; i< horizontal; i++){
     array[i] = malloc(vertical*sizeof(struct RGB));
   }
-  for (int i =0; i<horizontal; i++){
-    for (int j =0; j<vertical; j++){
+  for (int i =0; i<nb_bloc_h; i++){
+    for (int j =0; j<nb_bloc_v; j++){
       for (int k =0; k<8; k++){
 	for (int l =0; l<8; l++){
+	  
 	  array[8*i+k][8*j+l] = bigarray[i][j][k][l];
 	}
       }

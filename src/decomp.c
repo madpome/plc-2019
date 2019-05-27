@@ -100,14 +100,14 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg){
 int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
   int16_t ***image = malloc(nb_bloc_h*sizeof(int16_t **));
   for (int i=0; i<nb_bloc_h; i++){
-      image[i] = malloc(nb_bloc_v*sizeof(int16_t *));
-    }
+    image[i] = malloc(nb_bloc_v*sizeof(int16_t *));
+  }
   
   for (int i = 0; i< nb_bloc_h; i++){
     for (int j = 0; j< nb_bloc_v;j++){
-	  image[i][j] = trad_bloc(stream,jpeg);
-	}
+      image[i][j] = trad_bloc(stream,jpeg);
     }
+  }
   
   return image;
 }
