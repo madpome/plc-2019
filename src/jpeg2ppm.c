@@ -35,19 +35,18 @@ int main(int argc, char **argv){
     }
     float ****image_freq = malloc(nb_bloc_h*sizeof(float ***));
     for (int i =0; i<nb_bloc_h;i++){
-	image_freq[i] = malloc(nb_bloc_v*sizeof(float **));
-      }
+	       image_freq[i] = malloc(nb_bloc_v*sizeof(float **));
+    }
     struct RGB ****image_gris = malloc(nb_bloc_h*sizeof(float ***));
     for (int i =0; i<nb_bloc_h;i++){
-      image_gris[i] = malloc(nb_bloc_v*sizeof(float **));
+        image_gris[i] = malloc(nb_bloc_v*sizeof(float **));
     }
-    
+
     for (int j = 0; j<nb_bloc_v;j++){
-	       for (int i =0; i<nb_bloc_h;i++)
-	       {
+	       for (int i =0; i<nb_bloc_h;i++){
 	          image_quant[i][j] = quant_inv(image[i][j], quant_table);
 	          image_freq[i][j] = naive_idct(image_quant[i][j], table_cos);
-		  image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
+		      image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
             /* Faut convertir en ppm */
 	       }
     }
