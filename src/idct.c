@@ -24,6 +24,10 @@ float ** naive_idct(int16_t **frequence, float ** table_cos){
                     tab[i][j]+=C(lambda)*C(gamma)*table_cos[i][lambda]*table_cos[j][gamma]*frequence[lambda][gamma];
                 }
             }
+            tab[i][j] /= 4;
+            tab[i][j] +=128;
+            tab[i][j] = (tab[i][j]<0)?0:tab[i][j];
+            tab[i][j] = (tab[i][j]>255)?255:tab[i][j];
         }
     }
     return tab;
@@ -32,9 +36,13 @@ void transpose(float ** a){
 
     for(int i =0;i<8;i++){
         for(int j =i; j<8;j++){
-            float tmp = a[i][j];
-            a[i][j] = a[j][i];
+            float tmp = a[i][j]/8 +128;
+            a[i][j] = a[j][i]/8 +128;
             a[j][i] = tmp;
+            a[i][j] = (a[i][j]<0)?0:a[i][j];
+            a[i][j] = (a[i][j]>255)?255:a[i][j];
+            a[j][i] = (a[j][i]<0)?0:a[j][i];
+            a[j][i] = (a[j][i]>255)?255:a[j][i];
         }
     }
 }

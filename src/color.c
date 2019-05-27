@@ -25,9 +25,6 @@ RGB **ycbcr_to_gris(float **tab){
   }
   for(int i = 0;i<8;i++){
     for(int j = 0;j<8;j++){
-      tab[i][j] /=2;
-      tab[i][j] = (tab[i][j]<0)?0:(tab[i][j]);
-      tab[i][j] = (tab[i][j]>255)?255:tab[i][j];
       rgb[i][j].R = ((uint8_t) (tab[i][j]));
     }
   }

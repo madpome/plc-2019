@@ -22,9 +22,10 @@ int main(int argc, char **argv){
     }
 
     /* On récupère toutes les tables et les données de l'image */
-    //float **table_cos = cos_table();
+    float **table_cos = cos_table();
     struct bitstream *stream = get_bitstream(jpeg);
     uint8_t *quant_table = get_quantization_table(jpeg,0);
+    printf("%d\n", get_nb_quantization_tables(jpeg));
     uint16_t horizontal = get_image_size(jpeg,DIR_H);
     uint16_t vertical = get_image_size(jpeg,DIR_V);
     uint16_t nb_bloc_h = horizontal/8;
@@ -47,13 +48,13 @@ int main(int argc, char **argv){
         image_gris[i] = malloc(nb_bloc_h*sizeof(RGB **));
     }
 
-
+    int n =0;
     /* On passe chachun des blocs de l'image dans la chiane de modification */
     for (int i = 0; i<nb_bloc_v;i++){
 	     for (int j =0; j<nb_bloc_h;j++){
 	        image_quant[i][j] = quant_inv(image[i][j], quant_table);
-	        image_freq[i][j] = idct(image_quant[i][j]);//naive_idct(image_quant[i][j], table_cos);
-		    image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
+	        image_freq[i][j] = idct(image_quant[i][j]);//naive_idct(image_quant[i][j], table_cos);//idct(image_quant[i][j]);naive_idct(image_quant[i][j], table_cos);
+          image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
 	     }
     }
 

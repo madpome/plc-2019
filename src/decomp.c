@@ -44,7 +44,7 @@ int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec)
 	struct huff_table *huffman = get_huffman_table(jpeg, DC, 0);
 	int8_t magnitude = next_huffman_value(huffman, stream);
 	uint16_t indice = get_indice(stream, magnitude);
-	printf("%i + %i = %i \n", valeur_magnitude(magnitude, indice), *prec, valeur_magnitude(magnitude, indice)+*prec);
+	//printf("%i + %i = %i \n", valeur_magnitude(magnitude, indice), *prec, valeur_magnitude(magnitude, indice)+*prec);
 	return valeur_magnitude(magnitude, indice) + *prec;
 }
 
@@ -75,7 +75,7 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
 
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
 //TODO AFREE
-
+int aaa = 0;
 int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec){
 	/* Création du bloc */
   int16_t *bloc = calloc(64, sizeof(int16_t));
@@ -93,6 +93,7 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *pr
     i+= symbole.nb_zeros;
 		/* Ecriture de la valeur */
     bloc[i] = symbole.valeur;
+		//printf("AC = %x\n", symbole.valeur);
     i++;
   }
   return bloc;
@@ -103,7 +104,7 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *pr
 /* Créer un tableau dont chaque case et un bloc de 8x8 */
 int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
   int16_t *prec = calloc(1,sizeof(int16_t));
-	*prec = 259;
+	*prec = 0;
 	/* Initialisation de l'image */
   int16_t ***image = malloc(nb_bloc_v*sizeof(int16_t **));
   for (int i=0; i<nb_bloc_v; i++){
