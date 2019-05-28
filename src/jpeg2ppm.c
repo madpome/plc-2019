@@ -28,9 +28,10 @@ int main(int argc, char **argv){
     printf("%d\n", get_nb_quantization_tables(jpeg));
     uint16_t horizontal = get_image_size(jpeg,DIR_H);
     uint16_t vertical = get_image_size(jpeg,DIR_V);
-    uint16_t nb_bloc_h = horizontal/8+1;
-    uint16_t nb_bloc_v = vertical/8+1;
 
+    /* Nombre de blocs arrondi au supérieur pour supporter les bordures */
+    uint16_t nb_bloc_h = ceil(((float) horizontal)/8);
+    uint16_t nb_bloc_v = ceil(((float) vertical)/8);
 
     printf("%i\n", nb_bloc_h);
     printf("%i\n", nb_bloc_v);
@@ -65,10 +66,11 @@ int main(int argc, char **argv){
 	     }
     }
 
-    /* On transforme le tableau de blocs en image de pixels */
-    struct RGB **immondice = bloc2array(image_gris,nb_bloc_h,nb_bloc_v, 8*nb_bloc_h, 8*nb_bloc_v);
-    pixels_to_ppm(immondice,horizontal,vertical,1,argv[1]);
+    /* On transforme le tableau de blocs en tableau simple, les bordures en trop ne sont pas encore tronquées */
+    struct RGB **immondice = bloc2array(image_gris, nb_bloc_h, nb_bloc_v);
 
+    /* On transforme le tableau en image de pixels en ignorant les bordures en trop pour revenir à l'image originale */
+    pixels_to_ppm(immondice,horizontal,vertical,1,argv[1]);
 
     /* LIBERATION */
     for(int i =0;i<vertical;i++){
