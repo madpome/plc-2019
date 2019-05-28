@@ -11,6 +11,6 @@ extern int16_t ** zigzag_to_array(int16_t * zigzag);
 
 extern void pixels_to_ppm(RGB **pixels, int largeur, int hauteur, int noir_et_blanc, const char *filename);
 
-extern struct RGB **bloc2array(struct RGB ****bigarray,uint16_t nb_bloc_h,uint16_t nb_bloc_v);
+extern float **bloc2array(float ****bigarray,uint16_t nb_bloc_h,uint16_t nb_bloc_v);
 
 #endif

@@ -34,7 +34,7 @@ void pixels_to_ppm(RGB **pixels, int largeur, int hauteur,int noir_et_blanc, con
     fprintf(f,"255\n");
     for(int i =0;i<hauteur;i++){
         for(int j = 0;j<largeur;j++){
-            fwrite(&(pixels[i][j].R), sizeof(uint8_t), 1, f);
+          fwrite(&(pixels[i][j].R), sizeof(uint8_t), 1, f);
             if(noir_et_blanc == 0){
                 fwrite(&(pixels[i][j].G), sizeof(uint8_t), 1, f);
                 fwrite(&(pixels[i][j].B), sizeof(uint8_t), 1, f);
@@ -58,16 +58,16 @@ void pixels_to_ppm(RGB **pixels, int largeur, int hauteur,int noir_et_blanc, con
 
 
 /* Transforme un tableau de blocs en tableau 2D de pixels */
-struct RGB **bloc2array(struct RGB ****bigarray,uint16_t nb_bloc_h,uint16_t nb_bloc_v){
+float **bloc2array(float ****bigarray,uint16_t nb_bloc_h,uint16_t nb_bloc_v){
 
   /* Taille de l'image sans troncature des bordures */
   uint16_t horizontal_fictif = 8*nb_bloc_h;
   uint16_t vertical_fictif = 8*nb_bloc_v;
 
   /* Initialisation */
-  struct RGB **array = malloc(vertical_fictif*sizeof(struct RGB *));
+  float **array = malloc(vertical_fictif*sizeof(float *));
   for (int i =0; i< vertical_fictif; i++){
-    array[i] = malloc(horizontal_fictif*sizeof(struct RGB));
+    array[i] = malloc(horizontal_fictif*sizeof(float));
   }
 
 /* On parcourt les blocs (i,j) et (k,l) à l'intérieur des blocs */

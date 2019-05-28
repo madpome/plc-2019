@@ -5,7 +5,7 @@
 #include "../include/zigzag.h"
 #include "../include/quant_inv.h"
 #include "../include/color.h"
-
+#include "../include/initialisation_image.h"
 
 
 int main(int argc, char **argv){
@@ -24,11 +24,10 @@ int main(int argc, char **argv){
     /* On récupère toutes les tables et les données de l'image */
     struct bitstream *stream = get_bitstream(jpeg);
 
+    uint8_t *quant_table_y = get_quantization_table(jpeg, 0);
+    uint8_t *quant_table_c = get_quantization_table(jpeg, 1);
 
-    uint8_t *quant_table = get_quantization_table(jpeg,0);
-
-
-    printf("%d\n", get_nb_quantization_tables(jpeg));
+    //printf("%d\n", get_nb_quantization_tables(jpeg));
     uint16_t horizontal = get_image_size(jpeg,DIR_H);
     uint16_t vertical = get_image_size(jpeg,DIR_V);
 
@@ -36,40 +35,66 @@ int main(int argc, char **argv){
     uint16_t nb_bloc_h = ceil(((float) horizontal)/8);
     uint16_t nb_bloc_v = ceil(((float) vertical)/8);
 
+    uint16_t horizontal_fictif = 8*nb_bloc_h;
+    uint16_t vertical_fictif = 8*nb_bloc_v;
+
     /* Création de l'image avec les blocs traduits */
-    int16_t ***image = trad_image(stream, jpeg,nb_bloc_h,nb_bloc_v);
+    struct image image = trad_image(stream, jpeg, nb_bloc_h, nb_bloc_v);
 
     /* Initialisation des tableaux intermédiaires */
-    int16_t ****image_quant = malloc(nb_bloc_v*sizeof(int16_t ***));
-    for (int i =0; i<nb_bloc_v;i++){
-	       image_quant[i] = malloc(nb_bloc_h*sizeof(int16_t **));
-    }
-    float ****image_freq = malloc(nb_bloc_v*sizeof(float ***));
-    for (int i =0; i<nb_bloc_v;i++){
-	       image_freq[i] = malloc(nb_bloc_h*sizeof(float **));
-    }
-    struct RGB ****image_gris = malloc(nb_bloc_v*sizeof(RGB ***));
-    for (int i =0; i<nb_bloc_v;i++){
-        image_gris[i] = malloc(nb_bloc_h*sizeof(RGB **));
-    }
+        /* Init image quant */
+    int16_t ****image_quant_y = init_image_quant(nb_bloc_v, nb_bloc_h);
+    int16_t ****image_quant_cb = init_image_quant(nb_bloc_v, nb_bloc_h);
+    int16_t ****image_quant_cr = init_image_quant(nb_bloc_v, nb_bloc_h);
 
+      /* Init image freq */
+    float ****image_freq_y = init_image_freq(nb_bloc_v, nb_bloc_h);
+    float ****image_freq_cb = init_image_freq(nb_bloc_v, nb_bloc_h);
+    float ****image_freq_cr = init_image_freq(nb_bloc_v, nb_bloc_h);
 
-    /* On passe chachun des blocs de l'image dans la chiane de modification */
+    /* On passe chachun des blocs de l'image dans la chaine de modification */
     for (int i = 0; i<nb_bloc_v;i++){
 	     for (int j =0; j<nb_bloc_h;j++){
-	        image_quant[i][j] = quant_inv(image[i][j], quant_table);
-	        image_freq[i][j] = idct(image_quant[i][j]);//naive_idct(image_quant[i][j], table_cos);//idct(image_quant[i][j]);naive_idct(image_quant[i][j], table_cos);
-          image_gris[i][j] = ycbcr_to_gris(image_freq[i][j]);
+
+          /* Quantization et zigzag */
+	        image_quant_y[i][j] = quant_inv(image.y[i][j], quant_table_y);
+          image_quant_cb[i][j] = quant_inv(image.cb[i][j], quant_table_c);
+          image_quant_cr[i][j] = quant_inv(image.cr[i][j], quant_table_c);
+
+          /* iDCT */
+	        image_freq_y[i][j] = idct(image_quant_y[i][j]);//naive_idct(image_quant[i][j], table_cos);//idct(image_quant[i][j]);naive_idct(image_quant[i][j], table_cos);
+          image_freq_cb[i][j] = idct(image_quant_cb[i][j]);
+          image_freq_cr[i][j] = idct(image_quant_cr[i][j]);
+
 	     }
     }
 
+    /* On transforme les tableaux de fréquences 4D en 2D */
+    float ** array_y = bloc2array(image_freq_y, nb_bloc_h, nb_bloc_v);
+    float ** array_cb = bloc2array(image_freq_cb, nb_bloc_h, nb_bloc_v);
+    float ** array_cr = bloc2array(image_freq_cr, nb_bloc_h, nb_bloc_v);
+
+    /* Init RGB */
+    struct RGB **image_RGB = malloc(vertical_fictif*sizeof(struct RGB *));
+    for (int i =0; i<vertical_fictif; i++){
+      image_RGB[i] = malloc(horizontal_fictif*sizeof(struct RGB));
+    }
+
+    /* On utilise les trois arrays pour obtenir le tableau en RGB */
+    for (int i=0; i<vertical_fictif; i++){
+      for (int j=0; j<horizontal_fictif; j++){
+        image_RGB[i][j] = ycbcr_to_rgb(array_y[i][j], array_cb[i][j], array_cr[i][j]);
+      }
+    }
+
     /* On transforme le tableau de blocs en tableau simple, les bordures en trop ne sont pas encore tronquées */
-    struct RGB **immondice = bloc2array(image_gris, nb_bloc_h, nb_bloc_v);
+    ///struct RGB **immondice = bloc2array(image_gris, nb_bloc_h, nb_bloc_v);
 
     /* On transforme le tableau en image de pixels en ignorant les bordures en trop pour revenir à l'image originale */
-    pixels_to_ppm(immondice,horizontal,vertical,1,argv[1]);
+    pixels_to_ppm(image_RGB,horizontal,vertical,0,argv[1]);
 
     /* 1789 tmtc */
+    /*
     for(int i =0;i<vertical;i++){
         free(immondice[i]);
     }
@@ -96,6 +121,7 @@ int main(int argc, char **argv){
     free(image_freq);
     free(image_quant);
     free(image);
+*/
 
     /* Pour 1 seul bloc */
     // int16_t ** frequence = quant_inv(bloc,quant_table);

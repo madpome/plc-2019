@@ -4,6 +4,7 @@
 #include "../include/huffman.h"
 #include "../include/decomp.h"
 #include "../include/bitstream.h"
+#include "../include/initialisation_image.h"
 
 /* lit les 4 bits de poids fort d'un octet et renvoie l'entier correspondant */
 uint8_t read_high(uint8_t octet){
@@ -42,7 +43,7 @@ uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits){
 /* le stream doit être positionné au début d'un symbole DC, lit le symbole et renvoie la valeur associée */
 int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec, enum component comp){
 
-	comp = 2 ? 1 : comp;
+	comp = (comp==2)?1:comp;
 
 	struct huff_table *huffman = get_huffman_table(jpeg, DC, comp);
 	int8_t magnitude = next_huffman_value(huffman, stream);
@@ -54,7 +55,7 @@ int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec,
 /* le stream doit être positionné au début d'un symbole AC, lit le symbole et renvoie le nombre de 0 le précédent, la valeur associée, ou bien EOB */
 struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg, enum component comp){
 
-	comp = 2 ? 1 : comp;
+	comp = (comp==2)?1:comp;
 
   struct huff_table *huffman = get_huffman_table(jpeg, AC, comp);
   int8_t octet = next_huffman_value(huffman, stream);
@@ -81,18 +82,17 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg, enum
 
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
 //TODO AFREE
-int aaa = 0;
 int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec, enum component comp){
 
 	/* Création du bloc */
   int16_t *bloc = calloc(64, sizeof(int16_t));
-  bloc[0] = trad_DC(stream,jpeg,prec, comp);
+  bloc[0] = trad_DC(stream, jpeg, prec, comp);
 
   int i = 1;
 
 	/* Lecture des 63 AC */
   while (i < 64){
-		struct symbole_AC symbole = trad_AC(stream,jpeg, comp);
+		struct symbole_AC symbole = trad_AC(stream, jpeg, comp);
 		if (symbole.EOB == 1){
 			break;
 		}
@@ -100,7 +100,6 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *pr
     i+= symbole.nb_zeros;
 		/* Ecriture de la valeur */
     bloc[i] = symbole.valeur;
-		//printf("AC = %x\n", symbole.valeur);
     i++;
   }
   return bloc;
@@ -113,28 +112,20 @@ struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16
 	struct image image;
 
 	/* Initialisation de l'image Y */
-  int16_t ***image_y = malloc(nb_bloc_v*sizeof(int16_t **));
+  /*int16_t ***image_y = malloc(nb_bloc_v*sizeof(int16_t **));
   for (int i=0; i<nb_bloc_v; i++){
     image_y[i] = malloc(nb_bloc_h*sizeof(int16_t *));
-  }
+  }*/
+	int16_t ***image_y = init_image(nb_bloc_v, nb_bloc_h);
 	int16_t *prec_y = calloc(1,sizeof(int16_t));
 
-
 	/* Initialisation de l'image Cb */
-	int16_t ***image_cb = malloc(nb_bloc_v*sizeof(int16_t **));
-	for (int i=0; i<nb_bloc_v; i++){
-		image_cb[i] = malloc(nb_bloc_h*sizeof(int16_t *));
-	}
+	int16_t ***image_cb = init_image(nb_bloc_v, nb_bloc_h);
 	int16_t *prec_cb = calloc(1,sizeof(int16_t));
 
-
 	/* Initialisation de l'image Cr */
-  int16_t ***image_cr = malloc(nb_bloc_v*sizeof(int16_t **));
-  for (int i=0; i<nb_bloc_v; i++){
-    image_cr[i] = malloc(nb_bloc_h*sizeof(int16_t *));
-  }
+	int16_t ***image_cr = init_image(nb_bloc_v, nb_bloc_h);
 	int16_t *prec_cr = calloc(1,sizeof(int16_t));
-
 
 	/* On traduit les bloc et on les place dans l'image */
   for (int i = 0; i< nb_bloc_v; i++){

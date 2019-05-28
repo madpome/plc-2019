@@ -1,6 +1,6 @@
 #include "../include/color.h"
 
-struct RGB ycbcr_to_rgb(float Y, float C_r, float C_b){
+struct RGB ycbcr_to_rgb(float Y, float C_b, float C_r){
     RGB rgb;
     float a = Y + 1.402*(C_r-128);
     a = (a<0)?0:a;
