@@ -22,9 +22,12 @@ int main(int argc, char **argv){
     }
 
     /* On récupère toutes les tables et les données de l'image */
-    float **table_cos = cos_table();
     struct bitstream *stream = get_bitstream(jpeg);
+
+
     uint8_t *quant_table = get_quantization_table(jpeg,0);
+
+
     printf("%d\n", get_nb_quantization_tables(jpeg));
     uint16_t horizontal = get_image_size(jpeg,DIR_H);
     uint16_t vertical = get_image_size(jpeg,DIR_V);
@@ -32,12 +35,6 @@ int main(int argc, char **argv){
     /* Nombre de blocs arrondi au supérieur pour supporter les bordures */
     uint16_t nb_bloc_h = ceil(((float) horizontal)/8);
     uint16_t nb_bloc_v = ceil(((float) vertical)/8);
-
-    printf("%i\n", nb_bloc_h);
-    printf("%i\n", nb_bloc_v);
-    printf("%i\n", horizontal);
-    printf("%i\n", vertical);
-
 
     /* Création de l'image avec les blocs traduits */
     int16_t ***image = trad_image(stream, jpeg,nb_bloc_h,nb_bloc_v);
@@ -56,7 +53,7 @@ int main(int argc, char **argv){
         image_gris[i] = malloc(nb_bloc_h*sizeof(RGB **));
     }
 
-    int n =0;
+
     /* On passe chachun des blocs de l'image dans la chiane de modification */
     for (int i = 0; i<nb_bloc_v;i++){
 	     for (int j =0; j<nb_bloc_h;j++){
@@ -72,7 +69,7 @@ int main(int argc, char **argv){
     /* On transforme le tableau en image de pixels en ignorant les bordures en trop pour revenir à l'image originale */
     pixels_to_ppm(immondice,horizontal,vertical,1,argv[1]);
 
-    /* LIBERATION */
+    /* 1789 tmtc */
     for(int i =0;i<vertical;i++){
         free(immondice[i]);
     }

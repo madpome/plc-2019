@@ -40,8 +40,11 @@ uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits){
 
 
 /* le stream doit être positionné au début d'un symbole DC, lit le symbole et renvoie la valeur associée */
-int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec){
-	struct huff_table *huffman = get_huffman_table(jpeg, DC, 0);
+int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec, enum component comp){
+
+	comp = 2 ? 1 : comp;
+
+	struct huff_table *huffman = get_huffman_table(jpeg, DC, comp);
 	int8_t magnitude = next_huffman_value(huffman, stream);
 	uint16_t indice = get_indice(stream, magnitude);
 	//printf("%i + %i = %i \n", valeur_magnitude(magnitude, indice), *prec, valeur_magnitude(magnitude, indice)+*prec);
@@ -49,8 +52,11 @@ int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec)
 }
 
 /* le stream doit être positionné au début d'un symbole AC, lit le symbole et renvoie le nombre de 0 le précédent, la valeur associée, ou bien EOB */
-struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
-  struct huff_table *huffman = get_huffman_table(jpeg, AC, 0);
+struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg, enum component comp){
+
+	comp = 2 ? 1 : comp;
+
+  struct huff_table *huffman = get_huffman_table(jpeg, AC, comp);
   int8_t octet = next_huffman_value(huffman, stream);
   uint8_t nb_zeros = read_high(octet);
   uint8_t magnitude = read_low(octet);
@@ -76,16 +82,17 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg){
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
 //TODO AFREE
 int aaa = 0;
-int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec){
+int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec, enum component comp){
+
 	/* Création du bloc */
   int16_t *bloc = calloc(64, sizeof(int16_t));
-  bloc[0] = trad_DC(stream,jpeg,prec);
+  bloc[0] = trad_DC(stream,jpeg,prec, comp);
 
   int i = 1;
 
 	/* Lecture des 63 AC */
   while (i < 64){
-		struct symbole_AC symbole = trad_AC(stream,jpeg);
+		struct symbole_AC symbole = trad_AC(stream,jpeg, comp);
 		if (symbole.EOB == 1){
 			break;
 		}
@@ -102,23 +109,58 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *pr
 
 //a free
 /* Créer un tableau dont chaque case et un bloc de 8x8 */
-int16_t ***trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
-  int16_t *prec = calloc(1,sizeof(int16_t));
-	*prec = 0;
-	/* Initialisation de l'image */
-  int16_t ***image = malloc(nb_bloc_v*sizeof(int16_t **));
+struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
+	struct image image;
+
+	/* Initialisation de l'image Y */
+  int16_t ***image_y = malloc(nb_bloc_v*sizeof(int16_t **));
   for (int i=0; i<nb_bloc_v; i++){
-    image[i] = malloc(nb_bloc_h*sizeof(int16_t *));
+    image_y[i] = malloc(nb_bloc_h*sizeof(int16_t *));
   }
+	int16_t *prec_y = calloc(1,sizeof(int16_t));
+
+
+	/* Initialisation de l'image Cb */
+	int16_t ***image_cb = malloc(nb_bloc_v*sizeof(int16_t **));
+	for (int i=0; i<nb_bloc_v; i++){
+		image_cb[i] = malloc(nb_bloc_h*sizeof(int16_t *));
+	}
+	int16_t *prec_cb = calloc(1,sizeof(int16_t));
+
+
+	/* Initialisation de l'image Cr */
+  int16_t ***image_cr = malloc(nb_bloc_v*sizeof(int16_t **));
+  for (int i=0; i<nb_bloc_v; i++){
+    image_cr[i] = malloc(nb_bloc_h*sizeof(int16_t *));
+  }
+	int16_t *prec_cr = calloc(1,sizeof(int16_t));
+
 
 	/* On traduit les bloc et on les place dans l'image */
   for (int i = 0; i< nb_bloc_v; i++){
     for (int j = 0; j< nb_bloc_h;j++){
-      image[i][j] = trad_bloc(stream,jpeg,prec);
-			*prec = image[i][j][0];
+
+			/* Créer les trois images Y / Cb / Cr et modifie les prec */
+      image_y[i][j] = trad_bloc(stream,jpeg,prec_y, COMP_Y);
+			*prec_y = image_y[i][j][0];
+
+			image_cb[i][j] = trad_bloc(stream,jpeg,prec_cb, COMP_Cb);
+			*prec_cb = image_cb[i][j][0];
+
+			image_cr[i][j] = trad_bloc(stream,jpeg,prec_cr, COMP_Cr);
+			*prec_cr = image_cr[i][j][0];
+
     }
   }
-  free(prec);
+
+	image.y = image_y;
+	image.cb = image_cb;
+	image.cr = image_cr;
+
+  free(prec_y);
+	free(prec_cb);
+	free(prec_cr);
+
   return image;
 }
 
