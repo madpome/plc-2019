@@ -12,5 +12,5 @@ typedef struct RGB{
 }RGB;
 
 extern struct RGB ycbcr_to_rgb(float Y, float C_r, float C_b);
-extern RGB **ycbcr_to_gris(float **tab);
+extern RGB **ycbcr_to_gris(float **tab,uint16_t horizontal, uint16_t vertical);
 #endif

@@ -108,7 +108,7 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *pr
 
 //a free
 /* Créer un tableau dont chaque case et un bloc de 8x8 */
-struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v){
+struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v, uint8_t noir_et_blanc){
 	struct image image;
 
 	/* Initialisation de l'image Y */
@@ -116,50 +116,62 @@ struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16
   for (int i=0; i<nb_bloc_v; i++){
     image_y[i] = malloc(nb_bloc_h*sizeof(int16_t *));
   }*/
-	int16_t ***image_y = init_image(nb_bloc_v, nb_bloc_h);
-	int16_t *prec_y = calloc(1,sizeof(int16_t));
+	if (!noir_et_blanc){
+	  int16_t ***image_y = init_image(nb_bloc_v, nb_bloc_h);
+	  int16_t *prec_y = calloc(1,sizeof(int16_t));
 
-	/* Initialisation de l'image Cb */
-	int16_t ***image_cb = init_image(nb_bloc_v, nb_bloc_h);
-	int16_t *prec_cb = calloc(1,sizeof(int16_t));
+	  /* Initialisation de l'image Cb */
+	  int16_t ***image_cb = init_image(nb_bloc_v, nb_bloc_h);
+	  int16_t *prec_cb = calloc(1,sizeof(int16_t));
 
-	/* Initialisation de l'image Cr */
-	int16_t ***image_cr = init_image(nb_bloc_v, nb_bloc_h);
-	int16_t *prec_cr = calloc(1,sizeof(int16_t));
+	  /* Initialisation de l'image Cr */
+	  int16_t ***image_cr = init_image(nb_bloc_v, nb_bloc_h);
+	  int16_t *prec_cr = calloc(1,sizeof(int16_t));
 
-	/* On traduit les bloc et on les place dans l'image */
-  for (int i = 0; i< nb_bloc_v; i++){
-    for (int j = 0; j< nb_bloc_h;j++){
+	  /* On traduit les bloc et on les place dans l'image */
+	  for (int i = 0; i< nb_bloc_v; i++){
+	    for (int j = 0; j< nb_bloc_h;j++){
 
-			/* Créer les trois images Y / Cb / Cr et modifie les prec */
-      image_y[i][j] = trad_bloc(stream,jpeg,prec_y, COMP_Y);
-			*prec_y = image_y[i][j][0];
+	      /* Créer les trois images Y / Cb / Cr et modifie les prec */
+	      image_y[i][j] = trad_bloc(stream,jpeg,prec_y, COMP_Y);
+	      *prec_y = image_y[i][j][0];
 
-			image_cb[i][j] = trad_bloc(stream,jpeg,prec_cb, COMP_Cb);
-			*prec_cb = image_cb[i][j][0];
+	      image_cb[i][j] = trad_bloc(stream,jpeg,prec_cb, COMP_Cb);
+	      *prec_cb = image_cb[i][j][0];
 
-			image_cr[i][j] = trad_bloc(stream,jpeg,prec_cr, COMP_Cr);
-			*prec_cr = image_cr[i][j][0];
+	      image_cr[i][j] = trad_bloc(stream,jpeg,prec_cr, COMP_Cr);
+	      *prec_cr = image_cr[i][j][0];
 
-    }
-  }
+	    }
+	  }
 
-	image.y = image_y;
-	image.cb = image_cb;
-	image.cr = image_cr;
+	  image.y = image_y;
+	  image.cb = image_cb;
+	  image.cr = image_cr;
 
-  free(prec_y);
-	free(prec_cb);
-	free(prec_cr);
+	  free(prec_y);
+	  free(prec_cb);
+	  free(prec_cr);
+	}
+	
+	/*cas image en noir et blanc*/
+	else{
+	  int16_t ***image_y = init_image(nb_bloc_v, nb_bloc_h);
+	  int16_t *prec_y = calloc(1,sizeof(int16_t));
 
-  return image;
+	  for (int i = 0; i< nb_bloc_v; i++){
+	    for (int j = 0; j< nb_bloc_h;j++){
+
+	      /* Créer les trois images Y / Cb / Cr et modifie les prec */
+	      image_y[i][j] = trad_bloc(stream,jpeg,prec_y, COMP_Y);
+	      *prec_y = image_y[i][j][0];
+	    }
+	  }
+	  
+	  image.y = image_y;
+
+	  free(prec_y);
+	}
+	return image;
 }
 
-/*int main(int argc, char *argv[]){
-	if(argc!=3){
-		return -1;
-	}
-	printf("%i\n",atoi(argv[1]));
-	printf("%i\n",valeur_magnitude(atoi(argv[1]),atoi(argv[2])));
-	printf("%i\n", read_low(50));
-}*/
