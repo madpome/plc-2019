@@ -20,7 +20,7 @@ int main(int argc, char **argv){
         fprintf(stderr, "Problème lors de l'ouverture du fichier %s\n", argv[1]);
         return 1;
     }
-    
+
     /* On récupère toutes les tables et les données de l'image */
     struct bitstream *stream = get_bitstream(jpeg);
 
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
     uint16_t vertical_fictif = 8*nb_bloc_v;
 
     uint8_t nb_comp = get_nb_components(jpeg);
-    
+
     /* Création de l'image avec les blocs traduits */
 
     if (nb_comp == 3){
@@ -58,19 +58,19 @@ int main(int argc, char **argv){
 
       /* On passe chachun des blocs de l'image dans la chaine de modification */
       for (int i = 0; i<nb_bloc_v;i++){
-	for (int j =0; j<nb_bloc_h;j++){
+	       for (int j =0; j<nb_bloc_h;j++){
 
           /* Quantization et zigzag */
-	  image_quant_y[i][j] = quant_inv(image.y[i][j], quant_table_y);
-          image_quant_cb[i][j] = quant_inv(image.cb[i][j], quant_table_c);
-          image_quant_cr[i][j] = quant_inv(image.cr[i][j], quant_table_c);
+	         image_quant_y[i][j] = quant_inv(image.y[i][j], quant_table_y);
+           image_quant_cb[i][j] = quant_inv(image.cb[i][j], quant_table_c);
+           image_quant_cr[i][j] = quant_inv(image.cr[i][j], quant_table_c);
 
           /* iDCT */
-	  image_freq_y[i][j] = idct(image_quant_y[i][j]);//naive_idct(image_quant[i][j], table_cos);//idct(image_quant[i][j]);naive_idct(image_quant[i][j], table_cos);
-          image_freq_cb[i][j] = idct(image_quant_cb[i][j]);
-          image_freq_cr[i][j] = idct(image_quant_cr[i][j]);
+	         image_freq_y[i][j] = idct(image_quant_y[i][j]);//naive_idct(image_quant[i][j], table_cos);//idct(image_quant[i][j]);naive_idct(image_quant[i][j], table_cos);
+           image_freq_cb[i][j] = idct(image_quant_cb[i][j]);
+           image_freq_cr[i][j] = idct(image_quant_cr[i][j]);
 
-	}
+	        }
       }
 
       /* On transforme les tableaux de fréquences 4D en 2D */
@@ -81,14 +81,14 @@ int main(int argc, char **argv){
       /* Init RGB */
       struct RGB **image_RGB = malloc(vertical_fictif*sizeof(struct RGB *));
       for (int i =0; i<vertical_fictif; i++){
-	image_RGB[i] = malloc(horizontal_fictif*sizeof(struct RGB));
+	       image_RGB[i] = malloc(horizontal_fictif*sizeof(struct RGB));
       }
 
       /* On utilise les trois arrays pour obtenir le tableau en RGB */
       for (int i=0; i<vertical_fictif; i++){
-	for (int j=0; j<horizontal_fictif; j++){
-	  image_RGB[i][j] = ycbcr_to_rgb(array_y[i][j], array_cb[i][j], array_cr[i][j]);
-	}
+	       for (int j=0; j<horizontal_fictif; j++){
+	          image_RGB[i][j] = ycbcr_to_rgb(array_y[i][j], array_cb[i][j], array_cr[i][j]);
+	       }
       }
 
       /* On transforme le tableau de blocs en tableau simple, les bordures en trop ne sont pas encore tronquées */
@@ -107,19 +107,19 @@ int main(int argc, char **argv){
       int16_t ****image_quant_y = init_image_quant(nb_bloc_v, nb_bloc_h);
       float ****image_freq_y = init_image_freq(nb_bloc_v, nb_bloc_h);
       for (int i = 0; i<nb_bloc_v;i++){
-	for (int j =0; j<nb_bloc_h;j++){
+	       for (int j =0; j<nb_bloc_h;j++){
 
           /* Quantization et zigzag */
-	  image_quant_y[i][j] = quant_inv(image.y[i][j], quant_table_y);
+	         image_quant_y[i][j] = quant_inv(image.y[i][j], quant_table_y);
 
           /* iDCT */
-	  image_freq_y[i][j] = idct(image_quant_y[i][j]);//naive_idct(image_quant[i][j], table_cos);//idct(image_quant[i][j]);naive_idct(image_quant[i][j], table_cos);
-	}
+	         image_freq_y[i][j] = idct(image_quant_y[i][j]);//naive_idct(image_quant[i][j], table_cos);//idct(image_quant[i][j]);naive_idct(image_quant[i][j], table_cos);
+	       }
       }
       float ** array_y = bloc2array(image_freq_y, nb_bloc_h, nb_bloc_v);
       struct RGB **image_RGB = malloc(vertical_fictif*sizeof(struct RGB *));
       for (int i =0; i<vertical_fictif; i++){
-	image_RGB[i] = malloc(horizontal_fictif*sizeof(struct RGB));
+	       image_RGB[i] = malloc(horizontal_fictif*sizeof(struct RGB));
       }	
       image_RGB = ycbcr_to_gris(array_y,horizontal_fictif,vertical_fictif);
       pixels_to_ppm(image_RGB,horizontal,vertical,1,argv[1]);
