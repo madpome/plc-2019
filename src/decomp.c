@@ -105,7 +105,6 @@ int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *pr
   return bloc;
 }
 
-
 //a free
 /* Créer un tableau dont chaque case et un bloc de 8x8 */
 struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16_t nb_bloc_h, uint16_t nb_bloc_v, uint8_t noir_et_blanc){
@@ -153,7 +152,7 @@ struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16
 	  free(prec_cb);
 	  free(prec_cr);
 	}
-	
+
 	/*cas image en noir et blanc*/
 	else{
 	  int16_t ***image_y = init_image(nb_bloc_v, nb_bloc_h);
@@ -167,11 +166,10 @@ struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16
 	      *prec_y = image_y[i][j][0];
 	    }
 	  }
-	  
+
 	  image.y = image_y;
 
 	  free(prec_y);
 	}
 	return image;
 }
-
