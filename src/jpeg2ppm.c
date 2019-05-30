@@ -65,14 +65,14 @@ int main(int argc, char **argv){
        for (int j = 0; j< nb_bloc_h;j++){
              mcu mon_mcu;
              RGB ** mon_bloc = init_RGB(mcu_lignes, mcu_colonnes);
-             mon_mcu.y = trad_bloc(stream, jpeg, prec_y, COMP_Y);
+             mon_mcu.y = trad_composante(stream, jpeg, prec_y, COMP_Y);
              *prec_y = mon_mcu.y[0];
              quant_y = quant_inv(mon_mcu.y, quant_table_y);
              freq_y = idct(quant_y);
              if(noir_et_blanc == 0){
-                 mon_mcu.cb = trad_bloc(stream, jpeg, prec_cb, COMP_Cb);
+                 mon_mcu.cb = trad_composante(stream, jpeg, prec_cb, COMP_Cb);
                  *prec_cb = mon_mcu.cb[0];
-                 mon_mcu.cr = trad_bloc(stream, jpeg, prec_cr, COMP_Cr);
+                 mon_mcu.cr = trad_composante(stream, jpeg, prec_cr, COMP_Cr);
                  *prec_cr = mon_mcu.cr[0];
                  quant_cb = quant_inv(mon_mcu.cb, quant_table_c);
                  quant_cr = quant_inv(mon_mcu.cr, quant_table_c);

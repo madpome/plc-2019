@@ -37,3 +37,16 @@ void write_big_rgb(RGB **big, int x, int y, RGB ** small, int lignes, int colonn
         }
     }
 }
+
+struct RGB **tab_ycbcr_to_rgb(float **Y, float **C_r, float **C_b){
+  RGB **tab = malloc(8*sizeof(RGB *));
+  for (int i=0; i<8; i++){
+    tab[i] = malloc(8*sizeof(RGB));
+  }
+  for (int i=0; i<8; i++){
+    for (int j=0; j<8; j++){
+      tab[i][j] = ycbcr_to_rgb(Y[i][j],C_r[i][j],C_b[i][j]);
+    }
+  }
+  return tab;
+}
