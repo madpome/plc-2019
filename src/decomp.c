@@ -82,7 +82,7 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg, enum
 
 /*lit 1 bloc et renvoie un tableau de taille 64 contenant la valeur en fréquence de chaque pixel du bloc */
 //TODO AFREE
-int16_t *trad_bloc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec, enum component comp){
+int16_t *trad_composante(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec, enum component comp){
 
 	/* Création du bloc */
   int16_t *bloc = calloc(64, sizeof(int16_t));
@@ -132,13 +132,13 @@ struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16
 	    for (int j = 0; j< nb_bloc_h;j++){
 
 	      /* Créer les trois images Y / Cb / Cr et modifie les prec */
-	      image_y[i][j] = trad_bloc(stream,jpeg,prec_y, COMP_Y);
+	      image_y[i][j] = trad_composante(stream,jpeg,prec_y, COMP_Y);
 	      *prec_y = image_y[i][j][0];
 
-	      image_cb[i][j] = trad_bloc(stream,jpeg,prec_cb, COMP_Cb);
+	      image_cb[i][j] = trad_composante(stream,jpeg,prec_cb, COMP_Cb);
 	      *prec_cb = image_cb[i][j][0];
 
-	      image_cr[i][j] = trad_bloc(stream,jpeg,prec_cr, COMP_Cr);
+	      image_cr[i][j] = trad_composante(stream,jpeg,prec_cr, COMP_Cr);
 	      *prec_cr = image_cr[i][j][0];
 
 	    }
@@ -162,7 +162,7 @@ struct image trad_image(struct bitstream *stream, struct jpeg_desc *jpeg, uint16
 	    for (int j = 0; j< nb_bloc_h;j++){
 
 	      /* Créer les trois images Y / Cb / Cr et modifie les prec */
-	      image_y[i][j] = trad_bloc(stream,jpeg,prec_y, COMP_Y);
+	      image_y[i][j] = trad_composante(stream,jpeg,prec_y, COMP_Y);
 	      *prec_y = image_y[i][j][0];
 	    }
 	  }
