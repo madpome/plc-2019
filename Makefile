@@ -21,13 +21,13 @@ LDFLAGS =
 OBJPROF_FILES =  $(OBJPROF_DIR)/huffman.o  $(OBJPROF_DIR)/jpeg_reader.o $(OBJPROF_DIR)/bitstream.o
 
 # et les votres!
-OBJ_FILES = $(OBJ_DIR)/jpeg2ppm.o $(OBJ_DIR)/color.o $(OBJ_DIR)/decomp.o $(OBJ_DIR)/quant_inv.o $(OBJ_DIR)/zigzag.o $(OBJ_DIR)/idct.o $(OBJ_DIR)/initialisation_image.o
+OBJ_FILES = $(OBJ_DIR)/jpeg2ppm.o $(OBJ_DIR)/color.o $(OBJ_DIR)/decomp.o $(OBJ_DIR)/quant_inv.o $(OBJ_DIR)/zigzag.o $(OBJ_DIR)/idct.o $(OBJ_DIR)/initialisation_image.o $(OBJ_DIR)/mcu.o
 
 # cible par défaut
 
 TARGET = $(BIN_DIR)/jpeg2ppm
 
-INC_FILES = $(INC_DIR)/color.h $(INC_DIR)/decomp.h  $(INC_DIR)/quant_inv.h $(INC_DIR)/zigzag.h $(INC_DIR)/idct.h $(INC_DIR)/huffman.h $(INC_DIR)/jpeg_reader.h $(INC_DIR)/bitstream.h $(INC_DIR)/initialisation_image.h
+INC_FILES = $(INC_DIR)/color.h $(INC_DIR)/decomp.h  $(INC_DIR)/quant_inv.h $(INC_DIR)/zigzag.h $(INC_DIR)/idct.h $(INC_DIR)/huffman.h $(INC_DIR)/jpeg_reader.h $(INC_DIR)/bitstream.h $(INC_DIR)/initialisation_image.h $(INC_DIR)/mcu.h
 
 all: $(TARGET)
 
@@ -53,6 +53,8 @@ $(OBJ_DIR)/zigzag.o: $(SRC_DIR)/zigzag.c $(INC_FILES)
 $(OBJ_DIR)/initialisation_image.o: $(SRC_DIR)/initialisation_image.c $(INC_FILES)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/initialisation_image.c -o $(OBJ_DIR)/initialisation_image.o
 
+$(OBJ_DIR)/mcu.o: $(SRC_DIR)/mcu.c $(INC_FILES)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/mcu.c -o $(OBJ_DIR)/mcu.o
 .PHONY: clean
 
 clean:
