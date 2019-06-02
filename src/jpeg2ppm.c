@@ -7,13 +7,6 @@
 #include "../include/color.h"
 #include "../include/initialisation_image.h"
 
-
-typedef struct mcu {
-    int16_t *y;
-    int16_t *cb;
-    int16_t *cr;
-}mcu;
-
 int main(int argc, char **argv){
     if(argc != 2){
         fprintf(stderr, "Mauvais nombre d'arguments.\n");
