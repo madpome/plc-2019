@@ -67,7 +67,7 @@ int main(int argc, char **argv){
 	 if (noir_et_blanc == 0){
 	   mon_mcu = trad_mcu(stream,jpeg,prec_y,prec_cb,prec_cr,facteur_h,facteur_v,mcu_lignes,mcu_colonnes,quant_table_y,quant_table_c);
 	 }
-	 else{ 
+	 else{
 	   mon_mcu = trad_mcu_noir_et_blanc(stream,jpeg,prec_y,quant_table_y);
 	 }
 	 write_big_rgb(big_tab, top_left_x, top_left_y, mon_mcu, mcu_lignes, mcu_colonnes);
