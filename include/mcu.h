@@ -8,3 +8,5 @@
 extern RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec_y, int16_t *prec_cb,int16_t *prec_cr, uint8_t facteur_h, uint8_t facteur_v, uint8_t mcu_lignes, uint8_t mcu_colonnes, uint8_t *quant_table_y, uint8_t *quant_table_c);
 
 extern RGB **trad_mcu_noir_et_blanc(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec_y, uint8_t *quant_table_y);
+
+float **y_to_tab(float ***liste_y, uint8_t facteur_h, uint8_t facteur_v);
