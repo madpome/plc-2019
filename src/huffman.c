@@ -24,6 +24,8 @@ char * gimme_string(int taille, uint16_t compteur){
     s[compteur]= '\0';
     return s;
 }
+
+
 void add_to_arbre(Arbre *arbre, char *chemin, uint8_t value){
     Arbre *curr = arbre;
     Arbre *next = NULL;
@@ -39,6 +41,8 @@ void add_to_arbre(Arbre *arbre, char *chemin, uint8_t value){
     }
     next->val = value;
 }
+
+
 uint16_t donne_debut(uint8_t *nb_elem, uint16_t profondeur){
     //Codes commencent à 0
     //Au max par étage, on a 2^h noeuds
@@ -51,6 +55,8 @@ uint16_t donne_debut(uint8_t *nb_elem, uint16_t profondeur){
     }
     return n;
 }
+
+
 struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_byte_read){
     struct huff_table *table=calloc(1,sizeof(struct huff_table));
     *nb_byte_read = 0;

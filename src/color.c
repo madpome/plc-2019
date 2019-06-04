@@ -35,6 +35,10 @@ RGB **ycbcr_to_gris(float **tab,uint16_t horizontal,uint16_t vertical){
       rgb[i][j].R = ((uint8_t) (tab[i][j]));
     }
   }
+  for (int i = 0; i < 8; i++){
+      free(tab[i]);
+  }
+  free(tab);
   return rgb;
 }
 

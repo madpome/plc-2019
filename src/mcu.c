@@ -21,7 +21,17 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
         // On fait pointer le prec vers le DC qui vient d'être traduit
         *prec_y = y[0];
         int16_t **quant_y = quant_inv(y, quant_table_y);
+
+        free(y);
+
         liste_y[i] = idct(quant_y);
+
+        for (int j = 0; j < 8; j++){
+            free(quant_y[j]);
+        }
+        free(quant_y);
+
+ //AFREE
     }
 
     float **tab_y = y_to_tab(liste_y,facteur_h,facteur_v);
@@ -35,8 +45,18 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
     int16_t **quant_cb = quant_inv(cb, quant_table_c);
     int16_t **quant_cr = quant_inv(cr, quant_table_c);
 
+    free(cb);
+    free(cr);
+
     float **freq_cb = idct(quant_cb);
     float **freq_cr = idct(quant_cr);
+
+    for (int i = 0; i < 8; i++){
+        free(quant_cb[i]);
+        free(quant_cr[i]);
+    }
+    free(quant_cb);
+    free(quant_cr);
 
     // On reconstitue le MCU avec les composantes qu'il convient d'utiliser
     for (int i = 0; i<mcu_lignes; i++){
@@ -46,7 +66,25 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
                                          freq_cr[i/facteur_v][j/facteur_h]);
         }
     }
-  return mcu_rgb;
+
+    for (int i = 0; i < 8; i++){
+        free(freq_cb[i]);
+        free(freq_cr[i]);
+    }
+    free(freq_cb);
+    free(freq_cr);
+
+    for (int i=0; i<8*facteur_v; i++){
+        free(tab_y[i]);
+    }
+    free(tab_y);
+
+    for (int i = 0; i < facteur_v*facteur_h; i++){
+        free(liste_y[i]);
+    }
+    free(liste_y);
+
+    return mcu_rgb;
 }
 
 
@@ -58,7 +96,14 @@ RGB **trad_mcu_noir_et_blanc(struct bitstream *stream, struct jpeg_desc *jpeg,
     int16_t *y = trad_composante(stream, jpeg, prec_y, COMP_Y);
     *prec_y = y[0];
     int16_t **quant_y = quant_inv(y, quant_table_y);
+    free(y);
+
     float **freq_y = idct(quant_y);
+    for (int i = 0; i < 8; i++){
+        free(quant_y[i]);
+    }
+    free(quant_y);
+
     return ycbcr_to_gris(freq_y, 8, 8);
 }
 

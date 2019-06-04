@@ -56,7 +56,7 @@ int main(int argc, char **argv){
 
 
     // Création de l'image RGB finale
-    RGB **big_tab = init_RGB(vertical_fictif, horizontal_fictif+16);
+    RGB **big_tab = init_RGB(vertical_fictif, horizontal_fictif);
 
     // Cordonnées de notre position actuelle
     int top_left_x = 0;
@@ -66,7 +66,6 @@ int main(int argc, char **argv){
     int16_t *prec_y = calloc(1,sizeof(int16_t));
     int16_t *prec_cb = calloc(1,sizeof(int16_t));
     int16_t *prec_cr = calloc(1,sizeof(int16_t));
-
 
     /* On traduit tous les MCU selon qu'ils soient en couleur ou en gris
        et on recopie chaque MCU traduit dans l'image RGB finale */
@@ -85,6 +84,12 @@ int main(int argc, char **argv){
 	           }
 	           write_big_rgb(big_tab, top_left_x, top_left_y, mon_mcu,
                            mcu_lignes, mcu_colonnes);
+
+             for (int k = 0; k < mcu_lignes; k++){
+                free(mon_mcu[k]);
+             }
+             free(mon_mcu);
+
 	           top_left_x += mcu_colonnes;
         }
         top_left_y += mcu_lignes;
