@@ -89,7 +89,6 @@ int main(int argc, char **argv){
                 free(mon_mcu[k]);
              }
              free(mon_mcu);
-
 	           top_left_x += mcu_colonnes;
         }
         top_left_y += mcu_lignes;
