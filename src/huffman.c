@@ -1,4 +1,5 @@
 #include "../include/huffman.h"
+
 typedef struct Arbre{
     uint8_t val;
     struct Arbre *fg;

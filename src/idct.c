@@ -1,6 +1,7 @@
 #include "../include/idct.h"
 #include <math.h>
 #include <stdio.h>
+
 #define C(x) ((x==0)?(1/sqrt(2)):1)
 #define PI 3.14159265359
 #define SQRT_2_INV 0.70710678118
@@ -11,6 +12,7 @@
 #define SIN_6 0.92387953251
 #define SIN_3 0.55557023302
 #define SIN_1 0.19509032201
+
 // A COMPILER AVEC -lm
 float ** naive_idct(int16_t **frequence, float ** table_cos){
     float **tab = malloc(8*sizeof(float*));
@@ -32,8 +34,9 @@ float ** naive_idct(int16_t **frequence, float ** table_cos){
     }
     return tab;
 }
-void transpose(float ** a){
 
+
+void transpose(float ** a){
     for(int i =0;i<8;i++){
         for(int j =i; j<8;j++){
             float tmp = a[i][j]/8 +128;
@@ -46,6 +49,7 @@ void transpose(float ** a){
         }
     }
 }
+
 //Donne tous le bon résultat mais multiplié par 2,
 //remettre au bon niveau avec un decalage a droite APRES avoir convertie en int
 float **idct(int16_t **frequence){
@@ -64,6 +68,7 @@ float **idct(int16_t **frequence){
     transpose(tab_bis);
     return tab_bis;
 }
+
 float *idct_colonne(float **frequence, int col){
     float *I = malloc(8*sizeof(float));
     for(int j =0;j<8;j++){
