@@ -1,4 +1,3 @@
-
 #include "../include/bitstream.h"
 struct bitstream{
     //Fichier lié au bitstream
@@ -31,14 +30,6 @@ struct bitstream * create_bitstream(const char * filename){
 void close_bitstream ( struct bitstream * stream ){
     fclose(stream->f);
     free(stream);
-}
-//retourne les bits de a
-uint16_t reverse(uint16_t a){
-    uint16_t b = 0;
-    for(int i =0;i<16;i++){
-        b |= ((a & (1>>(15-i))) == (1>>(15-i)))?(1<<i):0;
-    }
-    return b;
 }
 void set_bit(uint32_t *dest, int pos, uint32_t bit){
     if(bit != 0){
@@ -115,6 +106,8 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
     }
     stream->cur_bit = (stream->cur_bit + actually_read)%8;
     //on se remet au bon endroit
+    free(d1);
+    free(d2);
     return actually_read;
 
 }
