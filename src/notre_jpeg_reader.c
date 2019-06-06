@@ -9,14 +9,14 @@ char *dup(const char *chaine){
 
 void parse_APP0(struct bitstream *stream){
   uint32_t bits = 0;
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits;
   bits = 0;
   int i = 0;
   char c;
   char *JFIF = "JFIF";
   while (i<5){
-    read_bitstream(stream,8, &bits, 1);
+    read_bitstream(stream,8, &bits, 0);
     c = bits;
     bits = 0;
     if (JFIF[i] != c){
@@ -26,48 +26,49 @@ void parse_APP0(struct bitstream *stream){
   }
   longueur -= 7;
   while (longueur != 0){
-    read_bitstream(stream, 8, &bits, 1);
+    read_bitstream(stream, 8, &bits, 0);
     longueur--;
   }
 }
 
 void parse_com(struct bitstream *stream){
   uint32_t bits = 0;
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
   bits = 0;
 
   while (longueur != 0){
-    read_bitstream(stream, 8, &bits, 1);
+    read_bitstream(stream, 8, &bits, 0);
     longueur--;
   }
 }
 
 void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
   uint32_t bits = 0;
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
   bits = 0;
 
-  uint8_t res[64];
+  uint8_t *res=malloc(64*sizeof(uint8_t));
   while (longueur != 0){
-    read_bitstream(stream, 4, &bits, 1);
+    read_bitstream(stream, 4, &bits, 0);
     uint8_t precision = bits;
     if (precision == 1){
-      fprintf(stderr, "precision non gérée dans notre cas");
+      fprintf(stderr, "precision non gérée dans notre cas\n");
       exit(0);
     }
     bits = 0;
-    read_bitstream(stream, 4, &bits, 1);
+    read_bitstream(stream, 4, &bits, 0);
     uint32_t indice = bits;
     bits = 0;
     longueur--;
 
     int i = 0;
     while (i<64){
-      read_bitstream(stream, 8, &bits, 1);
-      res[i] = (uint8_t) bits;
+      read_bitstream(stream, 8, &bits, 0);
+      res[i] = bits;
       bits = 0;
+      i++;
       longueur --;
     }
 
@@ -78,26 +79,26 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
 
 void parse_SOF0(struct bitstream *stream, struct donnees *donnees){
   uint32_t bits = 0;
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
   bits = 0;
 
-  read_bitstream(stream, 8, &bits, 1);
+  read_bitstream(stream, 8, &bits, 0);
   donnees->precision = bits;
   bits = 0;
   longueur--;
 
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   donnees->hauteur = bits;
   bits = 0;
   longueur-=2;
 
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   donnees->largeur = bits;
   bits = 0;
   longueur-=2;
 
-  read_bitstream(stream, 8, &bits, 1);
+  read_bitstream(stream, 8, &bits, 0);
   donnees->nb_composantes = bits;
   bits = 0;
   longueur--;
@@ -105,21 +106,21 @@ void parse_SOF0(struct bitstream *stream, struct donnees *donnees){
   struct composante *tab_comp = malloc(donnees->nb_composantes*sizeof(struct composante));
   for (uint32_t i =0; i<donnees->nb_composantes; i++){
     struct composante comp;
-    read_bitstream(stream, 8, &bits, 1);
+    read_bitstream(stream, 8, &bits, 0);
     comp.identifiant = bits;
     bits = 0;
     longueur--;
 
-    read_bitstream(stream, 4, &bits, 1);
+    read_bitstream(stream, 4, &bits, 0);
     comp.facteur_h = bits;
     bits = 0;
 
-    read_bitstream(stream, 4, &bits, 1);
+    read_bitstream(stream, 4, &bits, 0);
     comp.facteur_v = bits;
     bits = 0;
     longueur--;
 
-    read_bitstream(stream, 8, &bits, 1);
+    read_bitstream(stream, 8, &bits, 0);
     comp.table_quant = bits;
     bits = 0;
     longueur--;
@@ -127,25 +128,26 @@ void parse_SOF0(struct bitstream *stream, struct donnees *donnees){
     comp.component = i;
     tab_comp[i] = comp;
   }
+  donnees->composantes = tab_comp;
 }
 
 void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur){ 
   uint32_t bits = 0;
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
   bits = 0;
   uint16_t bits_lus;
   while (longueur != 0){
-    read_bitstream(stream, 3, &bits, 1);
+    read_bitstream(stream, 3, &bits, 0);
     if (bits != 0){
-      fprintf(stderr, "error reading huffman");
+      fprintf(stderr, "error reading huffman\n");
       exit(0);
     }
 
-    read_bitstream(stream, 1, &bits, 1);
+    read_bitstream(stream, 1, &bits, 0);
     uint8_t type = bits;
     bits =0; 
-    read_bitstream(stream, 4, &bits, 1);
+    read_bitstream(stream, 4, &bits, 0);
     uint8_t indice = bits;
     bits =0;
     longueur--;
@@ -164,46 +166,47 @@ void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct hu
 
 void parse_SOS(struct bitstream *stream, struct bitstream **image, struct donnees *donnees){
   uint32_t bits = 0;
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits -2;
   bits = 0;
   
-  read_bitstream(stream,8,&bits,1);
+  read_bitstream(stream,8,&bits,0);
   if (bits != donnees->nb_composantes){
-    fprintf(stderr, "wtf dude");
+    fprintf(stderr, "wtf dude\n");
     exit(0);
   }
   bits = 0;
   longueur--;
 
   for (int i =0; i<donnees->nb_composantes;i++){
-    read_bitstream(stream, 8, &bits,1);
+    read_bitstream(stream, 8, &bits,0);
     uint8_t id = bits;
     bits =0;
     longueur--;
 
-    read_bitstream(stream, 4, &bits, 1);
+    read_bitstream(stream, 4, &bits, 0);
     uint8_t id_dc = bits;
     bits =0;
 
-    read_bitstream(stream, 4, &bits, 1);
+    read_bitstream(stream, 4, &bits, 0);
     uint8_t id_ac = bits;
     bits = 0;
     longueur--;
     for (int j =0; j<donnees->nb_composantes; j++){
       if (donnees->composantes[j].identifiant == id){
+	///printf("id: %u, id_dc: %u, id_ac: %u\n", id,id_dc,id_ac);
 	donnees->composantes[j].ind_huffman_dc = id_dc;
 	donnees->composantes[j].ind_huffman_ac = id_ac;
       }
     }
-  } 
-  read_bitstream(stream, 24, &bits, 1);
+  }
+  read_bitstream(stream, 24, &bits, 0);
   bits = 0;
   *image = stream;
 }
 
 struct jpeg_desc *read_jpeg(const char *filename){
-  struct jpeg_desc *jpeg = malloc(sizeof(struct jpeg_desc));
+  struct jpeg_desc *jpeg = malloc(sizeof(struct jpeg_desc)); 
   jpeg->filename = dup(filename);
   struct bitstream *stream = create_bitstream(filename);
   uint16_t marqueur = 0;
@@ -212,19 +215,19 @@ struct jpeg_desc *read_jpeg(const char *filename){
   uint8_t compteur_q;
   uint8_t compteur_h;
   uint8_t **tables = malloc(4*sizeof(uint8_t *));
-  struct huff_table **table_AC = malloc(sizeof(struct huff_table *));
-  struct huff_table **table_DC = malloc(sizeof(struct huff_table *));
+  struct huff_table **table_AC = malloc(4*sizeof(struct huff_table *));
+  struct huff_table **table_DC = malloc(4*sizeof(struct huff_table *));
   struct donnees *donnees = malloc(sizeof(struct donnees));
   struct bitstream **image = malloc(sizeof(struct bitstream *));
   
-  read_bitstream(stream, 16, &bits, 1);
+  read_bitstream(stream, 16, &bits, 0);
   if (bits != 0xffd8){
-    fprintf(stderr,"whhallah c'est corrompu");
+    fprintf(stderr,"whhallah c'est corrompu\n");
     exit(0);
   }
 
-  while( !flag){
-    read_bitstream(stream, 16, &bits, 1);
+  while (!flag){
+    read_bitstream(stream, 16, &bits, 0);
     marqueur = bits;
     bits = 0;
     switch(marqueur){
@@ -333,7 +336,7 @@ uint8_t get_frame_component_huffman_index(const struct jpeg_desc *jpeg, uint8_t 
 
 void close_jpeg(struct jpeg_desc *jpeg){
   for (int i=0; i<jpeg->nb_quant_table;i++){
-    free(jpeg->tables_quantification[i]);
+    //free(jpeg->tables_quantification[i]);
   }
   free(jpeg->tables_quantification);
 

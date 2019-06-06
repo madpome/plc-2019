@@ -93,12 +93,11 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
    un tableau de nuances de gris */
 RGB **trad_mcu_noir_et_blanc(struct bitstream *stream, struct jpeg_desc *jpeg,
                              int16_t *prec_y, uint8_t *quant_table_y){
-
     int16_t *y = trad_composante(stream, jpeg, prec_y, COMP_Y);
+
     *prec_y = y[0];
     int16_t **quant_y = quant_inv(y, quant_table_y);
     free(y);
-
     float **freq_y = idct(quant_y);
     for (int i = 0; i < 8; i++){
         free(quant_y[i]);
