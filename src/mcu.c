@@ -3,7 +3,7 @@
 /* Traduit entièrement un MCU en prenant en entrée le bitstream et en
    renvoyant un tableau de RGB */
 RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
-               int16_t *prec_y, int16_t *prec_cb, int16_t *prec_cr,
+               struct prec prec,
                uint8_t facteur_h, uint8_t facteur_v,
                uint8_t mcu_lignes, uint8_t mcu_colonnes,
                uint8_t *quant_table_y, uint8_t *quant_table_cb,
@@ -18,9 +18,9 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
     /* On fait passer toutes les compoantes Y dans la chaine et on les stock
        dans une liste */
     for (int i = 0; i < facteur_v*facteur_h; i++){
-        int16_t *y = trad_composante(stream, jpeg, prec_y, COMP_Y);
+        int16_t *y = trad_composante(stream, jpeg, prec.y, COMP_Y);
         // On fait pointer le prec vers le DC qui vient d'être traduit
-        *prec_y = y[0];
+        *prec.y = y[0];
         int16_t **quant_y = quant_inv(y, quant_table_y);
 
         free(y);
@@ -38,10 +38,10 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
     float **tab_y = y_to_tab(liste_y,facteur_h,facteur_v);
 
     // On traduit les composantes Cb et Cr
-    int16_t *cb = trad_composante(stream, jpeg, prec_cb, COMP_Cb);
-    *prec_cb = cb[0];
-    int16_t *cr = trad_composante(stream, jpeg, prec_cr, COMP_Cr);
-    *prec_cr = cr[0];
+    int16_t *cb = trad_composante(stream, jpeg, prec.cb, COMP_Cb);
+    *prec.cb = cb[0];
+    int16_t *cr = trad_composante(stream, jpeg, prec.cr, COMP_Cr);
+    *prec.cr = cr[0];
 
     int16_t **quant_cb = quant_inv(cb, quant_table_cb);
     int16_t **quant_cr = quant_inv(cr, quant_table_cr);

@@ -35,7 +35,7 @@ RGB **ycbcr_to_gris(float **tab, uint16_t horizontal, uint16_t vertical){
       rgb[i][j].R = ((uint8_t) (tab[i][j]));
     }
   }
-  
+
   for (int i = 0; i < 8; i++){
       free(tab[i]);
   }
@@ -52,4 +52,36 @@ void write_big_rgb(RGB **big, int x, int y, RGB ** small, int lignes, int colonn
             big[i][j] = small[i-y][j-x];
         }
     }
+}
+
+
+/* Prend en entrée un tableau RGB et renvoie l'image correspondante
+   au format ppm si couleur ou pgm si niveau de gris */
+void pixels_to_ppm(RGB **pixels, int largeur, int hauteur,
+                   int noir_et_blanc, const char* filename){
+    char *s = malloc(sizeof(char)*(strlen(filename)+5));
+    sprintf(s,"%s%s",filename,(noir_et_blanc==1?".pgm":".ppm"));
+    FILE *f = fopen(s, "w");
+    if(f==NULL){
+        fprintf(stderr, "erreur pixels_to_ppm");
+        perror("");
+        return;
+    }
+
+    fprintf(f,(noir_et_blanc==0?"P6\n":"P5\n"));
+    fprintf(f,"%d %d\n",largeur, hauteur);
+    fprintf(f,"255\n");
+
+    for(int i =0;i<hauteur;i++){
+        for(int j = 0;j<largeur;j++){
+            fwrite(&(pixels[i][j].R), sizeof(uint8_t), 1, f);
+            // Si on est en noir et blanc on ne considère que le R
+            if(noir_et_blanc == 0){
+                fwrite(&(pixels[i][j].G), sizeof(uint8_t), 1, f);
+                fwrite(&(pixels[i][j].B), sizeof(uint8_t), 1, f);
+            }
+        }
+    }
+    free(s);
+    fclose(f);
 }

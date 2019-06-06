@@ -9,8 +9,14 @@
 #include "quant_inv.h"
 #include "idct.h"
 
+typedef struct prec{
+    int16_t *y;
+    int16_t *cb;
+    int16_t *cr;
+}prec;
+
 extern RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
-                      int16_t *prec_y, int16_t *prec_cb,int16_t *prec_cr,
+                      struct prec,
                       uint8_t facteur_h, uint8_t facteur_v,
                       uint8_t mcu_lignes, uint8_t mcu_colonnes,
                       uint8_t *quant_table_y, uint8_t *quant_table_cb,
