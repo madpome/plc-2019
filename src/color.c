@@ -25,7 +25,7 @@ RGB ycbcr_to_rgb(float Y, float C_b, float C_r){
 
 /* Prend en entrée un tableau de flottants et renvoie un tableau de RGB gris
 dont seule la composante rouge est initialisée */
-RGB **ycbcr_to_gris(float **tab,uint16_t horizontal,uint16_t vertical){
+RGB **ycbcr_to_gris(float **tab, uint16_t horizontal, uint16_t vertical){
   RGB **rgb = malloc(vertical*sizeof(RGB *));
   for(int i =0;i<vertical;i++){
     rgb[i] = malloc(horizontal*sizeof(RGB));
@@ -35,6 +35,7 @@ RGB **ycbcr_to_gris(float **tab,uint16_t horizontal,uint16_t vertical){
       rgb[i][j].R = ((uint8_t) (tab[i][j]));
     }
   }
+  
   for (int i = 0; i < 8; i++){
       free(tab[i]);
   }

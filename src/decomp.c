@@ -45,10 +45,10 @@ uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits){
 int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec,
 								enum component comp){
 
-    // On distingue Y(0) de Cb(1) et Cr(2)
-		comp = (comp==2)?1:comp;
+    // On récupère l'indice de la bonne table de huffman
+		uint8_t indice_DC = get_scan_component_huffman_index(jpeg, DC, comp);
 
-		struct huff_table *huffman = get_huffman_table(jpeg, DC, comp);
+		struct huff_table *huffman = get_huffman_table(jpeg, DC, indice_DC);
 		int8_t magnitude = next_huffman_value(huffman, stream);
 		uint16_t indice = get_indice(stream, magnitude);
 
@@ -59,12 +59,13 @@ int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec,
 
 /* Le stream doit être positionné au début d'un symbole AC,
 	 lit le symbole et renvoie le nombre de 0 puis la valeur associée, ou bien EOB */
-struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg, enum component comp){
+struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg,
+												  enum component comp){
 
-    // On distingue Y(0) de Cb(1) et Cr(2)
-		comp = (comp==2)?1:comp;
+    // On récupère l'indice de la bonne table de huffman
+		uint8_t indice_AC = get_scan_component_huffman_index(jpeg, AC, comp);
 
-  	struct huff_table *huffman = get_huffman_table(jpeg, AC, comp);
+  	struct huff_table *huffman = get_huffman_table(jpeg, AC, indice_AC);
   	int8_t octet = next_huffman_value(huffman, stream);
   	uint8_t nb_zeros = read_high(octet);
   	uint8_t magnitude = read_low(octet);

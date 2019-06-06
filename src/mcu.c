@@ -6,7 +6,8 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
                int16_t *prec_y, int16_t *prec_cb, int16_t *prec_cr,
                uint8_t facteur_h, uint8_t facteur_v,
                uint8_t mcu_lignes, uint8_t mcu_colonnes,
-               uint8_t *quant_table_y, uint8_t *quant_table_c){
+               uint8_t *quant_table_y, uint8_t *quant_table_cb,
+               uint8_t *quant_table_cr){
 
     // Initialisation d'une liste qui contient tous les blocs de la composante Y
     float ***liste_y = malloc(facteur_v*facteur_h*sizeof(float **));
@@ -42,8 +43,8 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
     int16_t *cr = trad_composante(stream, jpeg, prec_cr, COMP_Cr);
     *prec_cr = cr[0];
 
-    int16_t **quant_cb = quant_inv(cb, quant_table_c);
-    int16_t **quant_cr = quant_inv(cr, quant_table_c);
+    int16_t **quant_cb = quant_inv(cb, quant_table_cb);
+    int16_t **quant_cr = quant_inv(cr, quant_table_cr);
 
     free(cb);
     free(cr);
