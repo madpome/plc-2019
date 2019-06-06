@@ -9,7 +9,7 @@
 struct bitstream;
 
 extern struct bitstream *create_bitstream(const char *filename);
-
+extern void print_bin(uint32_t a);
 extern void close_bitstream(struct bitstream *stream);
 
 extern uint8_t read_bitstream(struct bitstream *stream,
