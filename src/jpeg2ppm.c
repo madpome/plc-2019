@@ -71,9 +71,9 @@ int main(int argc, char **argv){
     int top_left_y = 0;
 
     // On initialise les pointeurs vers les précédents DC de chaque composantes
-    int16_t *prec_y = calloc(1,sizeof(int16_t));
-    int16_t *prec_cb = calloc(1,sizeof(int16_t));
-    int16_t *prec_cr = calloc(1,sizeof(int16_t));
+    struct prec prec = {calloc(1, sizeof(int16_t)),
+                        calloc(1, sizeof(int16_t)),
+                        calloc(1, sizeof(int16_t))};
 
     /* On traduit tous les MCU selon qu'ils soient en couleur ou en gris
        et on recopie chaque MCU traduit dans l'image RGB finale */
@@ -82,13 +82,13 @@ int main(int argc, char **argv){
         for (int j = 0; j < nb_mcu_h; j++){
 	          RGB ** mon_mcu;
 	           if (noir_et_blanc == 0){
-	               mon_mcu = trad_mcu(stream,jpeg,prec_y, prec_cb,prec_cr,
+	               mon_mcu = trad_mcu(stream, jpeg, prec,
                                     facteur_h, facteur_v,
                                     mcu_lignes, mcu_colonnes,
                                     quant_table_y, quant_table_cb,
                                     quant_table_cr);
 	           } else {
-	               mon_mcu = trad_mcu_noir_et_blanc(stream, jpeg,prec_y,
+	               mon_mcu = trad_mcu_noir_et_blanc(stream, jpeg,prec.y,
                                                   quant_table_y);
 	           }
 	           write_big_rgb(big_tab, top_left_x, top_left_y, mon_mcu,
@@ -106,9 +106,9 @@ int main(int argc, char **argv){
     // On transforme notre tableau de RGB en une image au format idoine
     pixels_to_ppm(big_tab, horizontal, vertical, noir_et_blanc, argv[1]);
 
-    free(prec_y);
-    free(prec_cb);
-    free(prec_cr);
+    free(prec.y);
+    free(prec.cb);
+    free(prec.cr);
 
     for(int i =0;i<vertical_fictif;i++){
         free(big_tab[i]);
