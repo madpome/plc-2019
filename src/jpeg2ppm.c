@@ -77,11 +77,6 @@ int main(int argc, char **argv){
                         calloc(1, sizeof(int16_t)),
                         calloc(1, sizeof(int16_t))};
 
-
-    /*int16_t *prec_y = calloc(1,sizeof(int16_t));
-    int16_t *prec_cb = calloc(1,sizeof(int16_t));
-    int16_t *prec_cr = calloc(1,sizeof(int16_t));
-*/
     /* On traduit tous les MCU selon qu'ils soient en couleur ou en gris
        et on recopie chaque MCU traduit dans l'image RGB finale */
     for (int i = 0; i < nb_mcu_v; i++){
