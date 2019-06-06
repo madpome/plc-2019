@@ -27,11 +27,19 @@ int main(int argc, char **argv){
     // On lit le nombre de composantes pour savoir si on est en noir et blanc
     uint8_t noir_et_blanc = (get_nb_components(jpeg)==3)?0:1;
 
+    // On récupère les indices des tables de quantification
+    uint8_t indice_quant_y = get_frame_component_quant_index(jpeg, 0);
+    uint8_t indice_quant_cb = get_frame_component_quant_index(jpeg, 1);
+    uint8_t indice_quant_cr = get_frame_component_quant_index(jpeg, 2);
+
     // On récupère les tables de quantification
-    uint8_t *quant_table_y = get_quantization_table(jpeg, 0);
-    uint8_t *quant_table_c;
+    uint8_t *quant_table_y = get_quantization_table(jpeg, indice_quant_y);
+    uint8_t *quant_table_cb;
+    uint8_t *quant_table_cr;
     if (noir_et_blanc == 0){
-        quant_table_c = get_quantization_table(jpeg, 1);
+        quant_table_cb = get_quantization_table(jpeg, indice_quant_cb);
+        quant_table_cr = get_quantization_table(jpeg, indice_quant_cr);
+
     }
 
     // Taille de l'image
@@ -39,8 +47,10 @@ int main(int argc, char **argv){
     uint16_t vertical = get_image_size(jpeg,DIR_V);
 
     // Facteurs de sampling
-    uint8_t facteur_h = get_frame_component_sampling_factor(jpeg,DIR_H,0);
-    uint8_t facteur_v = get_frame_component_sampling_factor(jpeg,DIR_V,0);
+    uint8_t facteur_h = get_frame_component_sampling_factor(jpeg,DIR_H,
+                                                            indice_quant_y);
+    uint8_t facteur_v = get_frame_component_sampling_factor(jpeg,DIR_V,
+                                                            indice_quant_y);
 
     // Nombre de MCU arrondi au supérieur pour supporter les bordures
     uint16_t nb_mcu_h = ceil(((float) horizontal)/(8*facteur_h));
@@ -77,7 +87,8 @@ int main(int argc, char **argv){
 	               mon_mcu = trad_mcu(stream,jpeg,prec_y, prec_cb,prec_cr,
                                     facteur_h, facteur_v,
                                     mcu_lignes, mcu_colonnes,
-                                    quant_table_y, quant_table_c);
+                                    quant_table_y, quant_table_cb,
+                                    quant_table_cr);
 	           } else {
 	               mon_mcu = trad_mcu_noir_et_blanc(stream, jpeg,prec_y,
                                                   quant_table_y);
