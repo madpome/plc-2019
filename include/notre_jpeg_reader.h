@@ -77,6 +77,10 @@ extern uint8_t get_frame_component_sampling_factor(const struct jpeg_desc *jpeg 
 
 extern uint8_t get_frame_component_quant_index(const struct jpeg_desc *jpeg ,uint8_t frame_comp_index );
 
+extern uint8_t get_frame_component_huffman_index(const struct jpeg_desc *jpeg, uint8_t frame_comp_index,enum acdc acdc);
+
+extern void close_jpeg(struct jpeg_desc *jpeg);
+
 void parse_SOS(struct bitstream *stream, struct bitstream **image, struct donnees *donnees);
 
 void parse_APP0(struct bitstream *stream);
