@@ -1,5 +1,12 @@
 #include "../include/notre_jpeg_reader.h"
 
+char *dup(const char *chaine){
+  char *new = malloc(sizeof(char)*strlen(chaine)+1);
+  strcpy(new,chaine);
+  return new;
+}
+
+
 void parse_APP0(struct bitstream *stream){
   uint32_t bits = 0;
   read_bitstream(stream, 16, &bits, 1);
@@ -197,7 +204,7 @@ void parse_SOS(struct bitstream *stream, struct bitstream **image, struct donnee
 
 struct jpeg_desc *read_jpeg(const char *filename){
   struct jpeg_desc *jpeg = malloc(sizeof(struct jpeg_desc));
-  jpeg->filename = strdup(filename);
+  jpeg->filename = dup(filename);
   struct bitstream *stream = create_bitstream(filename);
   uint16_t marqueur = 0;
   uint8_t flag=0;
