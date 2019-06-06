@@ -315,3 +315,42 @@ uint8_t get_frame_component_quant_index(const struct jpeg_desc *jpeg,uint8_t fra
   return jpeg->donnees->composantes[frame_comp_index].table_quant;
 }
 
+uint8_t get_frame_component_huffman_index(const struct jpeg_desc *jpeg, uint8_t frame_comp_index, enum acdc acdc){
+  if (acdc){
+    return jpeg->donnees->composantes[frame_comp_index].ind_huffman_ac;
+  }
+  else{
+    return jpeg->donnees->composantes[frame_comp_index].ind_huffman_dc;
+  }
+}
+
+void close_jpeg(struct jpeg_desc *jpeg){
+  for (int i=0; i<jpeg->nb_quant_table;i++){
+    free(jpeg->tables_quantification[i]);
+  }
+  free(jpeg->tables_quantification);
+
+  free(jpeg->donnees->composantes);
+  free(jpeg->donnees);
+
+  int taille_ac = sizeof(jpeg->table_AC)/sizeof(struct huff_table *);
+  int taille_dc = sizeof(jpeg->table_DC)/sizeof(struct huff_table *);
+
+  for (int i =0; i<taille_ac; i++){
+    free(jpeg->table_AC[i]);
+  }
+  free(jpeg->table_AC);
+
+  for (int i=0; i<taille_dc;i++){
+    free(jpeg->table_DC[i]);
+  }
+  free(jpeg->table_DC);
+
+  close_bitstream(*(jpeg->image));
+  free(jpeg->image);
+
+  free(jpeg->filename);
+
+  free(jpeg);
+  
+}
