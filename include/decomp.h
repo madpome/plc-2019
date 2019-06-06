@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "huffman.h"
 #include "bitstream.h"
-#include "jpeg_reader.h"
+#include "notre_jpeg_reader.h"
 
 
 extern uint16_t get_indice(struct bitstream *stream, uint32_t nb_bits);

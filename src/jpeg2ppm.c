@@ -1,7 +1,5 @@
-///#include "../include/bitstream.h"
 #include "../include/idct.h"
-#include "../include/jpeg_reader.h"
-#include "../include/decomp.h"
+#include "../include/notre_jpeg_reader.h"
 #include "../include/zigzag.h"
 #include "../include/quant_inv.h"
 #include "../include/color.h"

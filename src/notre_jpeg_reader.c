@@ -27,7 +27,7 @@ void parse_APP0(struct bitstream *stream){
 void parse_com(struct bitstream *stream){
   uint32_t bits = 0;
   read_bitstream(stream, 16, &bits, 1);
-  uint longueur = bits - 2;
+  uint32_t longueur = bits - 2;
   bits = 0;
 
   while (longueur != 0){
@@ -39,7 +39,7 @@ void parse_com(struct bitstream *stream){
 void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
   uint32_t bits = 0;
   read_bitstream(stream, 16, &bits, 1);
-  uint longueur = bits - 2;
+  uint32_t longueur = bits - 2;
   bits = 0;
 
   uint8_t res[64];

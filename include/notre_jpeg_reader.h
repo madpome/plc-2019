@@ -1,6 +1,10 @@
+#ifndef __JPEG_READER_H__
+#define __JPEG_READER_H__
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include "../include/huffman.h"
 
 enum component {
@@ -93,3 +97,4 @@ void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct hu
 
 void parse_SOF0(struct bitstream *stream, struct donnees *donnees);
 
+#endif

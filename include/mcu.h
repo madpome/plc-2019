@@ -1,7 +1,6 @@
 #ifndef __MCU_H__
 #define __MCU_H__
 
-#include "../include/jpeg_reader.h"
 #include "../include/bitstream.h"
 #include "../include/color.h"
 #include "../include/decomp.h"
