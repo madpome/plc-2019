@@ -335,7 +335,7 @@ uint8_t get_frame_component_huffman_index(const struct jpeg_desc *jpeg, uint8_t 
 
 void close_jpeg(struct jpeg_desc *jpeg){
   for (int i=0; i<jpeg->nb_quant_table;i++){
-    //free(jpeg->tables_quantification[i]);
+    free(jpeg->tables_quantification[i]);
   }
   free(jpeg->tables_quantification);
 
@@ -346,12 +346,12 @@ void close_jpeg(struct jpeg_desc *jpeg){
   int taille_dc = sizeof(jpeg->table_DC)/sizeof(struct huff_table *);
 
   for (int i =0; i<taille_ac; i++){
-    free(jpeg->table_AC[i]);
+    free_huffman_table(jpeg->table_AC[i]);
   }
   free(jpeg->table_AC);
 
   for (int i=0; i<taille_dc;i++){
-    free(jpeg->table_DC[i]);
+    free_huffman_table(jpeg->table_DC[i]);
   }
   free(jpeg->table_DC);
 

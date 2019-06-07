@@ -4,12 +4,12 @@
 RGB ycbcr_to_rgb(float Y, float Cb, float Cr){
     RGB rgb;
 
-    float a = Y + 1.402*(Cr-128);
+    float a = Y + 1.402*(Cr-128); //Y
     a = (a<0)?0:a;
     a = (a>255)?255:a;
     rgb.R =(uint8_t) round(a);
 
-    a = Y - 0.34414*(Cb - 128) - 0.71313*(Cr - 128);
+    a = Y - 0.34414*(Cb - 128) - 0.71313*(Cr - 128); //Y Cr
     a = (a<0)?0:a;
     a = (a>255)?255:a;
     rgb.G = (uint8_t) round(a);
