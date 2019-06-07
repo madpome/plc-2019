@@ -12,7 +12,7 @@ struct bitstream{
 
 //Créer le bitstream
 struct bitstream * create_bitstream(const char * filename){
-    printf("opening %s\n",filename);
+  //printf("opening %s\n",filename);
     FILE * f = fopen(filename, "r");
     if(f==NULL){
         return NULL;
@@ -60,6 +60,11 @@ uint32_t reverse_opt(uint32_t a, int taille){
 }
 
 uint8_t read_8(struct bitstream *stream , uint8_t nb_bits, uint32_t *dest, bool discard_byte_stuffing){
+  if(end_of_bitstream(stream)){
+    printf("hoohoho");
+    *dest =0;
+    return 0;
+  }
     if(stream->never_read == true){
         stream->never_read = false;
         stream->cur_bit = 0;
@@ -74,22 +79,20 @@ uint8_t read_8(struct bitstream *stream , uint8_t nb_bits, uint32_t *dest, bool 
         if(n == 0) return 0;
     }
     uint8_t new_cur_bit = stream->cur_bit;
-    printf("cur bit =%d\n",new_cur_bit);
     int k =((stream->cur_bit+nb_bits>8)?8:(stream->cur_bit+nb_bits));
-    printf("k = %d\n",k);
+    //printf("k = %d\n",k);
     for(int i = stream->cur_bit;i<k;i++){
         set_bit(dest,actually_read,stream->cur>>(7-i)& 1);
         actually_read++;
         new_cur_bit++;
     }
-    print_bin(*dest);
-
     stream->cur_bit = new_cur_bit;
     //forcement <=8
     //<8 que si actually_read == nb_bits
-    if(actually_read != nb_bits){
+
+    if(actually_read != nb_bits || (stream->cur_bit == 8 && !end_of_bitstream(stream))){
         if(stream->cur == 0xFF){
-            printf("tueueue\n");
+	  //printf("tueueue\n");
             stream->prec_is_ff = true;
         }else{
             stream->prec_is_ff = false;
@@ -100,15 +103,16 @@ uint8_t read_8(struct bitstream *stream , uint8_t nb_bits, uint32_t *dest, bool 
         if (n == 0) return actually_read;
         while(stream->prec_is_ff == true && discard_byte_stuffing == true && stream->cur == 0x00){
             n = fread(&(stream->cur), 1, 1 ,stream->f);
-            if(n == 0) return 0;
+            if(n == 0) return actually_read;
         }
-        printf("actully %d\n",actually_read);
         int o = actually_read;
-        for(int i =0;i<(8-o);i++){
+        for(int i =0;i<(nb_bits-o);i++){
             set_bit(dest, actually_read, stream->cur>>(7-i) & 1);
             stream->cur_bit++;
+	    actually_read++;
         }
     }
+    
 
     return actually_read;
 }
@@ -128,7 +132,6 @@ uint8_t read_bitstream (struct bitstream *stream ,uint8_t nb_bits , uint32_t *de
         if (lu == 0) {
             break;
         }
-        printf("ici lu %d ,%d\n",lu,i);
         *dest =*dest | a<<bis;
         bis += lu;
         a = 0;
@@ -136,15 +139,15 @@ uint8_t read_bitstream (struct bitstream *stream ,uint8_t nb_bits , uint32_t *de
 
     if(stream->never_read == true){
         stream->never_read = false;
-        stream->cur_bit = 0;
+        stream->cur_bit = 0 ;
         fread(&(stream->cur),1,1,stream->f);
-        printf("mdr j'ai lu\n");
+        //printf("mdr j'ai lu\n");
     }
     if(nb_bits%8 != 0){
-        printf("diff de 0 frere\n");
+      //printf("diff de 0 frere %d\n",nb_bits%8);
         a = 0;
         lu = read_8(stream,nb_bits%8,&a, discard_byte_stuffing);
-        if (lu == 0) {
+	if (lu == 0) {
             *dest = reverse_opt(*dest, bis);
             return bis;
         }
@@ -154,22 +157,25 @@ uint8_t read_bitstream (struct bitstream *stream ,uint8_t nb_bits , uint32_t *de
     *dest = reverse_opt(*dest, bis);
     return bis;
 }
+/*
 int main(int argc, char **argv){
     FILE *f = fopen("toto.txt","w");
     uint16_t a = 0;
-    a = 0xFFFF;
-    fwrite(&a,1, 2, f);
-    a = 0xFF00;
-    fwrite(&a,1, 2, f);
+    a = 0xFF;
+    fwrite(&a,1, 1, f);
+    a = 0x0;
+    fwrite(&a,1, 1, f);
     fclose(f);
     struct bitstream* stream = create_bitstream("toto.txt");
     uint32_t b = 0;
-    while(end_of_bitstream(stream) == false){
-        a = read_bitstream(stream, 8 , &b, false);
+    while(end_of_bitstream(stream) == false){  
+      a = read_bitstream(stream, 7  , &b, true);
         printf("%d\n",a);
-        printf("current = %d, cur_bit = %d, prec = %d\n",stream->cur, stream->cur_bit, stream->prec_is_ff);
+	printf("b: %x\n",b);
+        printf("current = %x, cur_bit = %d, prec = %d\n",stream->cur, stream->cur_bit, stream->prec_is_ff);
     }
     return 1;
-}
+    }*/
+
 /* Optionnel ! */
 //extern void skip_bitstream_until ( struct bitstream *stream ,uint8_t byte);
