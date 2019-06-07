@@ -18,10 +18,10 @@ LDFLAGS =
 # Liste des fichiers objet
 
 # les notres...
-OBJPROF_FILES = $(OBJPROF_DIR)/huffman.o $(OBJPROF_DIR)/bitstream.o
+OBJPROF_FILES = $(OBJPROF_DIR)/bitstream.o
 
 # et les votres!
-OBJ_FILES = $(OBJ_DIR)/jpeg2ppm.o $(OBJ_DIR)/color.o $(OBJ_DIR)/decomp.o $(OBJ_DIR)/quant_inv.o $(OBJ_DIR)/zigzag.o $(OBJ_DIR)/idct.o $(OBJ_DIR)/initialisation_image.o $(OBJ_DIR)/mcu.o $(OBJ_DIR)/notre_jpeg_reader.o #$(OBJ_DIR)/bitstream.o
+OBJ_FILES = $(OBJ_DIR)/jpeg2ppm.o $(OBJ_DIR)/color.o $(OBJ_DIR)/decomp.o $(OBJ_DIR)/quant_inv.o $(OBJ_DIR)/zigzag.o $(OBJ_DIR)/idct.o $(OBJ_DIR)/initialisation_image.o $(OBJ_DIR)/mcu.o $(OBJ_DIR)/notre_jpeg_reader.o $(OBJ_DIR)/huffman.o #$(OBJ_DIR)/bitstream.o
 
 # cible par défaut
 
@@ -61,6 +61,9 @@ $(OBJ_DIR)/notre_jpeg_reader.o: $(SRC_DIR)/notre_jpeg_reader.c $(INC_FILES)
 
 $(OBJ_DIR)/bitstream.o: $(SRC_DIR)/bitstream.c $(INC_FILES)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/bitstream.c -o $(OBJ_DIR)/bitstream.o
+
+$(OBJ_DIR)/huffman.o: $(SRC_DIR)/huffman.c $(INC_FILES)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/huffman.c -o $(OBJ_DIR)/huffman.o
 
 .PHONY: clean
 
