@@ -81,7 +81,10 @@ RGB **trad_mcu(struct bitstream *stream, struct jpeg_desc *jpeg,
     free(tab_y);
 
     for (int i = 0; i < facteur_v*facteur_h; i++){
-        free(liste_y[i]);
+      for (int j=0; j<8;j++){
+        free(liste_y[i][j]);
+      }
+      free(liste_y[i]);
     }
     free(liste_y);
 

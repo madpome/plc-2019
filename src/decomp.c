@@ -46,7 +46,8 @@ int16_t trad_DC(struct bitstream *stream, struct jpeg_desc *jpeg, int16_t *prec,
 								enum component comp){
 
     // On récupère l'indice de la bonne table de huffman
-  uint8_t indice_DC = get_frame_component_huffman_index(jpeg, (uint8_t) comp, DC);
+  	uint8_t indice_DC = get_frame_component_huffman_index(jpeg, (uint8_t) comp,
+																													DC);
 
 		struct huff_table *huffman = get_huffman_table(jpeg, DC, indice_DC);
 		int8_t magnitude = next_huffman_value(huffman, stream);
@@ -85,7 +86,8 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg,
       	}
   	}
   	uint16_t indice = get_indice(stream, magnitude);
-  	struct symbole_AC retour = {0,nb_zeros, valeur_magnitude(magnitude, indice)};
+  	struct symbole_AC retour = {0, nb_zeros,
+																valeur_magnitude(magnitude, indice)};
   	return retour;
 }
 
