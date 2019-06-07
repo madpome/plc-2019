@@ -73,8 +73,10 @@ uint16_t donne_debut(uint8_t *nb_elem, uint16_t profondeur){
 }
 
 /* Créer la table de huffman en fonction du stream lu */
-struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_byte_read){
-    struct huff_table *table=calloc(1,sizeof(struct huff_table));
+struct huff_table * load_huffman_table(struct bitstream *stream,
+                                       uint16_t *nb_byte_read){
+
+    struct huff_table *table = calloc(1,sizeof(struct huff_table));
     table->arbre = calloc(1,sizeof(struct Arbre));
     (table->arbre)->fg = NULL;
     (table->arbre)->fd = NULL;
@@ -94,7 +96,7 @@ struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_by
             table->nb_elem+= nb_elem[i];
             (*nb_byte_read)++;
         }else{
-            fprintf(stderr, "y'a un pb doc 1\n");
+            fprintf(stderr, "Erreur : nombre de bits lus invalide\n");
             exit(-1);
         }
     }
@@ -108,7 +110,7 @@ struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_by
         lu = read_bitstream(stream, 8, &pre_lecture, true);
         oct_total+=lu;
         if(lu!=8){
-            fprintf(stderr, "y'a un pb doc 2 lu =%d, i = %d\n",lu,i);
+            fprintf(stderr, "Erreur : nombre de bits lus invalide\n");
             exit(-1);
         }
         //pre_lecture = reverse_opt(pre_lecture,8);
