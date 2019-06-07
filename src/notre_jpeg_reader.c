@@ -48,7 +48,6 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
   read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
   bits = 0;
-
   uint8_t *res=malloc(64*sizeof(uint8_t));
   while (longueur != 0){
     read_bitstream(stream, 4, &bits, 0);
@@ -63,6 +62,8 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
     bits = 0;
     longueur--;
 
+    free(tables[indice]);
+    
     int i = 0;
     while (i<64){
       read_bitstream(stream, 8, &bits, 0);
