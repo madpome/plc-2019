@@ -312,8 +312,17 @@ struct jpeg_desc *read_jpeg(const char *filename){
                 flag = 1;
                 break;
             }
+
+            // Cas non gérés
+            case 0xffc1:
+                printf("DCT séquentielle étendue non gérée\n");
+                exit(0);
+            case 0xffc2:
+                printf("DCT progressive non gérée\n");
+                exit(0);
             default:
                 printf("Ce marqueur n'est pas géré par notre décodeur\n");
+                exit(0);
         }
     }
     jpeg->nb_quant_table = compteur_q;
