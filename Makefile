@@ -18,7 +18,7 @@ LDFLAGS =
 # Liste des fichiers objet
 
 # les notres...
-OBJPROF_FILES =  $(OBJPROF_DIR)/bitstream.o $(OBJPROF_DIR)/jpeg_reader.o #$(OBJPROF_DIR)/huffman.o
+OBJPROF_FILES = $(OBJPROF_DIR)/bitstream.o  $(OBJPROF_DIR)/jpeg_reader.o #$(OBJPROF_DIR)/huffman.o
 
 # et les votres!
 OBJ_FILES = $(OBJ_DIR)/jpeg2ppm.o $(OBJ_DIR)/color.o $(OBJ_DIR)/decomp.o $(OBJ_DIR)/quant_inv.o $(OBJ_DIR)/zigzag.o $(OBJ_DIR)/idct.o $(OBJ_DIR)/initialisation_image.o $(OBJ_DIR)/mcu.o   $(OBJ_DIR)/huffman.o #$(OBJ_DIR)/bitstream.o #$(OBJ_DIR)/notre_jpeg_reader.o
