@@ -68,20 +68,12 @@ $(OBJ_DIR)/mcu.o: $(SRC_DIR)/mcu.c $(INC_FILES)
 $(OBJ_DIR)/notre_jpeg_reader.o: $(SRC_DIR)/notre_jpeg_reader.c $(INC_FILES)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/notre_jpeg_reader.c -o $(OBJ_DIR)/notre_jpeg_reader.o
 
-<<<<<<< HEAD
 $(OBJ_DIR)/huffman.o: $(SRC_DIR)/huffman.c $(INC_FILES)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/huffman.c -o $(OBJ_DIR)/huffman.o
 
 $(OBJ_DIR)/bitstream.o: $(SRC_DIR)/bitstream.c $(INC_FILES)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/bitstream.c -o $(OBJ_DIR)/bitstream.o
-=======
-$(OBJ_DIR)/bitstream.o: $(SRC_DIR)/bitstream.c $(INC_FILES)
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/bitstream.c -o $(OBJ_DIR)/bitstream.o
 
-$(OBJ_DIR)/huffman.o: $(SRC_DIR)/huffman.c $(INC_FILES)
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/huffman.c -o $(OBJ_DIR)/huffman.o
-
->>>>>>> 10f9c83957f82b1bcab144d55da706a4f3294449
 .PHONY: clean
 
 clean:
