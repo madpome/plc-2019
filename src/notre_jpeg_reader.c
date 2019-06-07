@@ -74,7 +74,7 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
 
     tables[indice] = res;
     *compteur+=1;
-  } 
+  }
 }
 
 void parse_SOF0(struct bitstream *stream, struct donnees *donnees){
@@ -131,7 +131,7 @@ void parse_SOF0(struct bitstream *stream, struct donnees *donnees){
   donnees->composantes = tab_comp;
 }
 
-void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur){ 
+void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur){
   uint32_t bits = 0;
   read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
@@ -146,7 +146,7 @@ void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct hu
 
     read_bitstream(stream, 1, &bits, 0);
     uint8_t type = bits;
-    bits =0; 
+    bits =0;
     read_bitstream(stream, 4, &bits, 0);
     uint8_t indice = bits;
     bits =0;
@@ -160,7 +160,7 @@ void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct hu
     }
     longueur-=bits_lus;
     *compteur+=1;
-  } 
+  }
 }
 
 
@@ -169,7 +169,7 @@ void parse_SOS(struct bitstream *stream, struct bitstream **image, struct donnee
   read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits -2;
   bits = 0;
-  
+
   read_bitstream(stream,8,&bits,0);
   if (bits != donnees->nb_composantes){
     fprintf(stderr, "wtf dude\n");
@@ -206,26 +206,25 @@ void parse_SOS(struct bitstream *stream, struct bitstream **image, struct donnee
 }
 
 struct jpeg_desc *read_jpeg(const char *filename){
-  struct jpeg_desc *jpeg = malloc(sizeof(struct jpeg_desc)); 
+  struct jpeg_desc *jpeg = malloc(sizeof(struct jpeg_desc));
   jpeg->filename = dup(filename);
   struct bitstream *stream = create_bitstream(filename);
   uint16_t marqueur = 0;
   uint8_t flag=0;
   uint32_t bits = 0;
-  uint8_t compteur_q;
-  uint8_t compteur_h;
+  uint8_t compteur_q = 0;
+  uint8_t compteur_h = 0;
   uint8_t **tables = malloc(4*sizeof(uint8_t *));
   struct huff_table **table_AC = malloc(4*sizeof(struct huff_table *));
   struct huff_table **table_DC = malloc(4*sizeof(struct huff_table *));
   struct donnees *donnees = malloc(sizeof(struct donnees));
   struct bitstream **image = malloc(sizeof(struct bitstream *));
-  
+
   read_bitstream(stream, 16, &bits, 0);
   if (bits != 0xffd8){
-    fprintf(stderr,"whhallah c'est corrompu\n");
+    fprintf(stderr,"whallah c'est corrompu\n");
     exit(0);
   }
-
   while (!flag){
     read_bitstream(stream, 16, &bits, 0);
     marqueur = bits;
@@ -258,7 +257,7 @@ struct jpeg_desc *read_jpeg(const char *filename){
       jpeg->image = image;
       flag = 1;
       break;
-    } 
+    }
     }
   }
   jpeg->nb_quant_table = compteur_q;
@@ -362,5 +361,5 @@ void close_jpeg(struct jpeg_desc *jpeg){
   free(jpeg->filename);
 
   free(jpeg);
-  
+
 }

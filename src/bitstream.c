@@ -30,12 +30,14 @@ struct bitstream * create_bitstream(const char * filename){
     printf("END : %ld\n",bit->end);
     return bit;
 }
+
 void print_bin(uint32_t a){
     for(int i =0;i<32;i++){
         printf("%d",(a>>(32-i-1) & 1)==1);
     }
     printf("\n");
 }
+
 void close_bitstream ( struct bitstream * stream ){
     fclose(stream->f);
     free(stream);
@@ -49,9 +51,11 @@ void set_bit(uint32_t *dest, int pos, uint32_t bit){
         *dest = *dest & (~(a | 1<<pos));
     }
 }
+
 bool end_of_bitstream ( struct bitstream * stream ){
     return (stream->current == stream->end)?true:false;
 }
+
 //renverse les bits de a de 0 à taille
 uint32_t reverse_opt(uint32_t a, int taille){
     uint32_t b=0;
@@ -60,6 +64,7 @@ uint32_t reverse_opt(uint32_t a, int taille){
     }
     return b;
 }
+
 //Lit que sur 16 lui
 uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t *dest, bool discard_byte_stuffing, int numero){
     if(fseek(stream->f, stream->current, SEEK_SET) !=0){
@@ -74,7 +79,7 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
     if(discard_byte_stuffing==true && stream->prec == 0xFF && *d1 == 0x00){
         n = fread(d1,1,1,stream->f);
         stream->current+=n;
-        if(n == 0)  return 0;
+        if(n == 0) return 0;
         stream->cur_bit = 0;
     }
     int n2 =fread(d2,1,1,stream->f);
@@ -158,6 +163,7 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
     return actually_read;
 
 }
+
 //discard_byte_stuffing : si on lit 00 et qu'il est precedé de FF et que c'est
 //a true, alors on ignore
 uint8_t read_bitstream (struct bitstream *stream ,uint8_t nb_bits , uint32_t *dest, bool discard_byte_stuffing ){
@@ -167,11 +173,14 @@ uint8_t read_bitstream (struct bitstream *stream ,uint8_t nb_bits , uint32_t *de
         return 0;
     }
     int n = read_bitstream_bis(stream,(nb_bits<=16)?nb_bits:16,dest,discard_byte_stuffing,1);
+
     if(nb_bits>16){
+        printf("2\n");
         int n2 = read_bitstream_bis(stream,nb_bits-16,&a,discard_byte_stuffing,2);
         *dest = (*dest) << n2 | a;
         n+=n2   ;
     }
+
     //retourne_moi_ta_mere(dest, n);
     /*printf("nb_bits = %d, discard_byte_stuffing = %d n = %d\n",nb_bits,discard_byte_stuffing,n);
     printf("curr = %ld prec= %x cur_bit = %d end = %ld\n",stream->current,  stream->prec, stream->cur_bit, stream->end);

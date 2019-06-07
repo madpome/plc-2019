@@ -27,8 +27,12 @@ int main(int argc, char **argv){
 
     // On récupère les indices des tables de quantification
     uint8_t indice_quant_y = get_frame_component_quant_index(jpeg, 0);
-    uint8_t indice_quant_cb = get_frame_component_quant_index(jpeg, 1);
-    uint8_t indice_quant_cr = get_frame_component_quant_index(jpeg, 2);
+    uint8_t indice_quant_cb;
+    uint8_t indice_quant_cr;
+    if (noir_et_blanc == 0){
+        indice_quant_cb = get_frame_component_quant_index(jpeg, 1);
+        indice_quant_cr = get_frame_component_quant_index(jpeg, 2);
+   }
 
     // On récupère les tables de quantification
     uint8_t *quant_table_y = get_quantization_table(jpeg, indice_quant_y);
