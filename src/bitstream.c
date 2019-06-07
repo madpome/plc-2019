@@ -74,8 +74,11 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
     if(discard_byte_stuffing==true && stream->prec == 0xFF && *d1 == 0x00){
         n = fread(d1,1,1,stream->f);
         stream->current+=n;
-        if(n == 0)  return 0;
         stream->cur_bit = 0;
+        while(*d1 == 0x00 &&  n!=0){
+            n = fread(d1,1,1,stream->f);
+            stream->current+=n;
+        }
     }
     int n2 =fread(d2,1,1,stream->f);
     //position du bit à lire (de gauche a droite) et commence a 0
@@ -102,7 +105,10 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
                 //il faut sauter les 2 prochains bytes
                 n2 = fread(d2, 1, 1, stream->f);
                 stream->current+=n2;
-                if(n2 == 0) break;
+                while(*d2 == 0x00 && n2!=0){
+                    n2 = fread(d2, 1, 1, stream->f);
+                    stream->current+=n2;
+                }
             }
             position = 0;
         }
@@ -121,9 +127,13 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
         n = fread(d1,1,1, stream->f);
         if(n != 0){
             if(discard_byte_stuffing==true && *d2 == 0xFF && *d1 == 0x00){
-            n = fread(d1,1,1,stream->f);
-            stream->current+=n;
-            stream->cur_bit = 0;
+                n = fread(d1,1,1,stream->f);
+                stream->current+=n;
+                stream->cur_bit = 0;
+                while(*d1 == 0x00 &&  n!=0){
+                    n = fread(d1,1,1,stream->f);
+                    stream->current+=n;
+                }
             }
             position = 0;
             //Je lis les bits manquant
