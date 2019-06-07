@@ -71,16 +71,16 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
         //erreur
         exit(-1);
     }
-    //d1 est le premier byte, celui qu'on utilise, d2 est lu en prévision
+    // d1 est le premier byte, celui qu'on utilise, d2 est lu en prévision
     uint8_t *d1 = calloc(1, sizeof(uint8_t));
     uint8_t *d2 = calloc(1, sizeof(uint8_t));
     int n = fread(d1, 1, 1, stream->f);
-    //Si je vois qu'il vaut et que prec vaut FF alors je le saute si on discard
+    // Si je vois qu'il vaut et que prec vaut FF alors je le saute si on discard
     if(discard_byte_stuffing==true && stream->prec == 0xFF && *d1 == 0x00){
         n = fread(d1,1,1,stream->f);
         stream->current+=n;
         stream->cur_bit = 0;
-        while(*d1 == 0x00 &&  n!=0){
+        while(*d1 == 0x00 && n!=0){
             n = fread(d1,1,1,stream->f);
             stream->current+=n;
         }
@@ -117,7 +117,7 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
             }
             position = 0;
         }
-        set_bit(dest,i, ((a_lire==1)?*d1:*d2)>>(7-position) & 1);
+        set_bit(dest, i, ((a_lire==1)?*d1:*d2)>>(7-position) & 1);
         actually_read++;
         //Si on est en fin de byte on passe au suivant
         if(position == 7){
@@ -125,6 +125,7 @@ uint8_t read_bitstream_bis(struct bitstream *stream ,uint8_t nb_bits , uint32_t 
         }
         position++;
     }
+
     //On doit lire au plus encore 1 byte
     //Je regarde que si numero == 2 car sinon les bytes a lire seront lu dans le deuxiee
     if(numero == 2 && position == 8 && a_lire == 2 && i != nb_bits){
