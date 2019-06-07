@@ -355,6 +355,7 @@ uint8_t get_nb_components(const struct jpeg_desc *jpeg){
 /* Récupère l'identifiant des composants YCbCr */
 uint8_t get_frame_component_id(const struct jpeg_desc *jpeg,
                                uint8_t frame_comp_index ){
+
     return jpeg->donnees->composantes[frame_comp_index].identifiant;
 }
 
@@ -362,7 +363,7 @@ uint8_t get_frame_component_id(const struct jpeg_desc *jpeg,
 uint8_t get_frame_component_sampling_factor(const struct jpeg_desc *jpeg,
                                             enum direction dir,
                                             uint8_t frame_comp_index ){
-    if (dir){
+    if (!dir){
         return jpeg->donnees->composantes[frame_comp_index].facteur_h;
     }
     else{
