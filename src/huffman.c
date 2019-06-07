@@ -1,5 +1,4 @@
 #include "../include/huffman.h"
-
 typedef struct Arbre{
     uint8_t val;
     struct Arbre *fg;
@@ -10,7 +9,6 @@ struct huff_table{
     uint8_t nb_elem;
     struct Arbre *arbre;
 };
-
 
 char * gimme_string(int taille, uint16_t compteur){
     //Renvoie la chaine de 0 et 1 associé au noeud de profondeur taille et de numéro compteur de gauche a droite;
@@ -68,18 +66,12 @@ uint16_t donne_debut(uint8_t *nb_elem, uint16_t profondeur){
     return n;
 }
 
-uint8_t reverse(uint8_t a){
-    uint8_t b = 0;
-    for(int i =0;i<8;i++){
-        b |= (a>>(7-i) & 1)==1?(1<<i):0;
-    }
-    return b;
-}
 struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_byte_read){
     struct huff_table *table=calloc(1,sizeof(struct huff_table));
     table->arbre = calloc(1,sizeof(struct Arbre));
     (table->arbre)->fg = NULL;
     (table->arbre)->fd = NULL;
+    int oct_total = 0;
     *nb_byte_read = 0;
     uint8_t nb_elem[16];
     int lu=0;
@@ -87,16 +79,16 @@ struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_by
     uint32_t pre_lecture = 0;
     for(int i = 0;i<16;i++){
         lu = read_bitstream(stream, 8, &pre_lecture, false);
+        oct_total += lu;
         if(lu == 8){
+            nb_elem[i] = 0;
             nb_elem[i] = (uint8_t) pre_lecture;
-            nb_elem[i] = reverse(nb_elem[i]);
             pre_lecture = 0;
             table->nb_elem+= nb_elem[i];
             (*nb_byte_read)++;
         }else{
             fprintf(stderr, "y'a un pb doc 1\n");
             exit(-1);
-
         }//sinon c'est une erreur et je sais pas
     }
     //On commence à lire les caractères
@@ -106,13 +98,14 @@ struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_by
     uint16_t nombre = 0;
     uint16_t profondeur = 1;
     for(int i = 0;i<table->nb_elem;i++){
-        lu = read_bitstream(stream, 8, &pre_lecture, false);
+        lu = read_bitstream(stream, 8, &pre_lecture, true);
+        oct_total+=lu;
         if(lu!=8){
-            fprintf(stderr, "y'a un pb doc 2\n");
+            fprintf(stderr, "y'a un pb doc 2 lu =%d, i = %d\n",lu,i);
             exit(-1);
         }
+        //pre_lecture = reverse_opt(pre_lecture,8);
         c = (uint8_t) pre_lecture;
-        c = reverse(c);
         //On se met au premier truc où on a effectiviement un truc a coder
         if(nombre == nb_elem[profondeur-1]){
             profondeur++;
@@ -126,6 +119,7 @@ struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_by
         add_to_arbre(table->arbre,chem,c);
         debut++;
         nombre++;
+        (*nb_byte_read)++;
         free(chem);
     }
     return table;
@@ -135,11 +129,10 @@ int8_t next_huffman_value(struct huff_table *table, struct bitstream *stream){
 
     uint32_t lire = 0;
     while(0 == 0){
-
         if(arbre->fg == NULL && arbre->fd == NULL){
             return arbre->val;
         }
-        if(read_bitstream(stream, 1, &lire, false) != 1){
+        if(read_bitstream(stream, 1, &lire, true) != 1){
             fprintf(stderr, "y'a un pb doc 3\n");
             exit(-1);
         }
