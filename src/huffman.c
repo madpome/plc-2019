@@ -172,6 +172,7 @@ void free_arbre(Arbre *arbre){
 
 /* Libère une table de Huffman */
 void free_huffman_table(struct huff_table *table){
+    if(table== NULL) return;
     free_arbre(table->arbre);
     free(table);
 }
