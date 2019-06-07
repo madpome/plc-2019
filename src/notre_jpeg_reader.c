@@ -46,10 +46,17 @@ void parse_com(struct bitstream *stream){
     bits = 0;
 
     // Commentaires de l'image
+    char *to_print = malloc(longueur*sizeof(char));
+    int i =0;
     while (longueur != 0){
         read_bitstream(stream, 8, &bits, 0);
+        to_print[i] = bits;
+        i++;
         longueur--;
     }
+    // On print les commentaires car c'est rigolo 
+    fprintf(stderr, "Message caché: %s\n", to_print);
+    free(to_print);
 }
 
 
