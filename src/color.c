@@ -46,7 +46,8 @@ RGB **ycbcr_to_gris(float **tab, uint16_t horizontal, uint16_t vertical){
 
 /* Copie un tableau (small) dans un plus grand tableau (big) en démarrant par
 le coin en haut à de coordonées (x, y) */
-void write_big_rgb(RGB **big, int x, int y, RGB ** small, int lignes, int colonnes){
+void write_big_rgb(RGB **big, int x, int y, RGB ** small, int lignes,
+                                                          int colonnes){
     for(int i =y;i<(y+lignes);i++){
         for(int j =x;j<(x+colonnes);j++){
             big[i][j] = small[i-y][j-x];

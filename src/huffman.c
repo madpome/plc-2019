@@ -1,17 +1,22 @@
 #include "../include/huffman.h"
+
 typedef struct Arbre{
     uint8_t val;
     struct Arbre *fg;
     struct Arbre *fd;
 }Arbre;
+
 struct huff_table{
     //Cet arbre ne peut jamais être NULL;
     uint8_t nb_elem;
     struct Arbre *arbre;
 };
 
+
+
+/* Renvoie la chaine de 0 et 1 associé au noeud de profondeur taille et
+   de numéro compteur de gauche a droite */
 char * gimme_string(int taille, uint16_t compteur){
-    //Renvoie la chaine de 0 et 1 associé au noeud de profondeur taille et de numéro compteur de gauche a droite;
     char *s = calloc((taille+1),sizeof(char));
     uint16_t a = 1;
     //Il faudra lire le code "a l'envers"
@@ -23,6 +28,7 @@ char * gimme_string(int taille, uint16_t compteur){
 }
 
 
+/* Ajoute une valeur à un arbre de Huffman */
 void add_to_arbre(Arbre *arbre, char *chemin, uint8_t value){
     Arbre *curr = arbre;
     Arbre *next = NULL;
@@ -66,6 +72,7 @@ uint16_t donne_debut(uint8_t *nb_elem, uint16_t profondeur){
     return n;
 }
 
+/* Créer la table de huffman en fonction du stream lu */
 struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_byte_read){
     struct huff_table *table=calloc(1,sizeof(struct huff_table));
     table->arbre = calloc(1,sizeof(struct Arbre));
@@ -89,7 +96,7 @@ struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_by
         }else{
             fprintf(stderr, "y'a un pb doc 1\n");
             exit(-1);
-        }//sinon c'est une erreur et je sais pas
+        }
     }
     //On commence à lire les caractères
     uint8_t c = 0;
@@ -124,6 +131,10 @@ struct huff_table * load_huffman_table(struct bitstream *stream, uint16_t *nb_by
     }
     return table;
 }
+
+
+/* Suit le chemin dans l'arbre de huffman en focntion du stream lu et renvoie
+   la valeur de la feuille sur laquelle on tombe */
 int8_t next_huffman_value(struct huff_table *table, struct bitstream *stream){
     Arbre *arbre = table->arbre;
 
@@ -147,10 +158,8 @@ int8_t next_huffman_value(struct huff_table *table, struct bitstream *stream){
     return -1;
 }
 
-/*int8_t next_huffman_value_count(struct huff_table *table,
-                                 struct bitstream *stream,
-                                 uint8_t *nb_bits_read);
-*/
+
+/* Libère un arbre de huffman */
 void free_arbre(Arbre *arbre){
         if(arbre->fg != NULL){
             free_arbre(arbre->fg);
@@ -161,48 +170,8 @@ void free_arbre(Arbre *arbre){
         free(arbre);
 }
 
+/* Libère une table de Huffman */
 void free_huffman_table(struct huff_table *table){
     free_arbre(table->arbre);
     free(table);
 }
-/*
-int main(int argc, char**argv){
-    FILE * f = fopen("toto.txt","w");
-    char c = 0;
-    fwrite(&c, 1, 1, f);
-    c= 3;
-    fwrite(&c, 1, 1, f);
-    c=2;
-    fwrite(&c, 1, 1, f);
-    c=0;
-    for(int i =0;i<13;i++){
-        fwrite(&c, 1, 1, f);
-    }
-    c = 'd';
-    fwrite(&c, 1, 1, f);
-    c ='e';
-    fwrite(&c, 1, 1, f);
-    c = 'a';
-    fwrite(&c, 1, 1, f);
-    c='c';
-    fwrite(&c, 1, 1, f);
-    c = 'b';
-    fwrite(&c, 1, 1, f);
-    c =0xD8;
-    fwrite(&c, 1, 1, f);
-    c = 0x0E;
-    fwrite(&c, 1, 1, f);
-    fclose(f);
-    struct bitstream * stream = create_bitstream("toto.txt");
-    uint16_t lu  =0;
-    struct huff_table * huff = load_huffman_table(stream, &lu);
-    printf("%c\n",next_huffman_value(huff,stream));
-    printf("%c\n",next_huffman_value(huff,stream));
-    printf("%c\n",next_huffman_value(huff,stream));
-    printf("%c\n",next_huffman_value(huff,stream));
-    printf("%c\n",next_huffman_value(huff,stream));
-    close_bitstream(stream);
-    free_huffman_table(huff);
-
-    return 1;
-}*/

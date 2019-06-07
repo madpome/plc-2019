@@ -63,7 +63,8 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg,
 												  enum component comp){
 
     // On récupère l'indice de la bonne table de huffman
-  uint8_t indice_AC = get_frame_component_huffman_index(jpeg, (uint8_t) comp, AC);
+  	uint8_t indice_AC = get_frame_component_huffman_index(jpeg, (uint8_t)comp,
+																													AC);
 
   	struct huff_table *huffman = get_huffman_table(jpeg, AC, indice_AC);
   	int8_t octet = next_huffman_value(huffman, stream);
@@ -90,7 +91,6 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg,
 
 /* Lit un bloc d'une composante de couleur et renvoie un tableau de taille 64
 	 contenant la valeur en fréquence de chaque pixel du bloc */
-//TODO AFREE
 int16_t *trad_composante(struct bitstream *stream, struct jpeg_desc *jpeg,
 												 int16_t *prec, enum component comp){
 

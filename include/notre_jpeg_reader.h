@@ -64,38 +64,48 @@ extern struct bitstream *get_bitstream(const struct jpeg_desc *jpeg);
 
 extern char *get_filename(const struct jpeg_desc *jpeg);
 
-extern uint8_t get_nb_quantization_tables ( const struct jpeg_desc *jpeg);
+extern uint8_t get_nb_quantization_tables(const struct jpeg_desc *jpeg);
 
 extern uint8_t get_nb_huff_tables(const struct jpeg_desc *jpeg);
 
-extern uint8_t * get_quantization_table ( const struct jpeg_desc *jpeg ,
-uint8_t index );
+extern uint8_t * get_quantization_table(const struct jpeg_desc *jpeg,
+                                        uint8_t index );
 
-extern struct huff_table * get_huffman_table ( const struct jpeg_desc *jpeg ,enum acdc acdc ,uint8_t index );
+extern struct huff_table * get_huffman_table(const struct jpeg_desc *jpeg,
+                                             enum acdc acdc ,uint8_t index);
 
-extern uint16_t get_image_size ( struct jpeg_desc *jpeg ,enum direction dir);
+extern uint16_t get_image_size(struct jpeg_desc *jpeg ,enum direction dir);
 
-extern uint8_t get_nb_components ( const struct jpeg_desc *jpeg);
+extern uint8_t get_nb_components(const struct jpeg_desc *jpeg);
 
-extern uint8_t get_frame_component_id ( const struct jpeg_desc *jpeg ,uint8_t frame_comp_index );
+extern uint8_t get_frame_component_id(const struct jpeg_desc *jpeg,
+                                      uint8_t frame_comp_index );
 
-extern uint8_t get_frame_component_sampling_factor(const struct jpeg_desc *jpeg ,enum direction dir,uint8_t frame_comp_index );
+extern uint8_t get_frame_component_sampling_factor(const struct jpeg_desc *jpeg,
+                                                   enum direction dir,
+                                                   uint8_t frame_comp_index );
 
-extern uint8_t get_frame_component_quant_index(const struct jpeg_desc *jpeg ,uint8_t frame_comp_index );
+extern uint8_t get_frame_component_quant_index(const struct jpeg_desc *jpeg,
+                                               uint8_t frame_comp_index );
 
-extern uint8_t get_frame_component_huffman_index(const struct jpeg_desc *jpeg, uint8_t frame_comp_index,enum acdc acdc);
+extern uint8_t get_frame_component_huffman_index(const struct jpeg_desc *jpeg,
+                                                 uint8_t frame_comp_index,
+                                                 enum acdc acdc);
 
 extern void close_jpeg(struct jpeg_desc *jpeg);
 
-void parse_SOS(struct bitstream *stream, struct bitstream **image, struct donnees *donnees);
+void parse_SOS(struct bitstream *stream, struct bitstream **image,
+               struct donnees *donnees);
 
 void parse_APP0(struct bitstream *stream);
 
 void parse_com(struct bitstream *stream);
 
-void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur);
+void parse_dqt(struct bitstream *stream, uint8_t **tables, uint8_t *compteur);
 
-void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur,uint8_t *taille_AC, uint8_t *taille_DC);
+void parse_DHT(struct bitstream *stream, struct huff_table **table_AC,
+               struct huff_table **table_DC,
+               uint8_t *compteur,uint8_t *taille_AC, uint8_t *taille_DC);
 
 void parse_SOF0(struct bitstream *stream, struct donnees *donnees);
 
