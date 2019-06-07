@@ -4,12 +4,12 @@
 RGB ycbcr_to_rgb(float Y, float Cb, float Cr){
     RGB rgb;
 
-    float a = Y + 1.402*(Cr-128);
+    float a = Y + 1.402*(Cr-128); //Y
     a = (a<0)?0:a;
     a = (a>255)?255:a;
     rgb.R =(uint8_t) round(a);
 
-    a = Y - 0.34414*(Cb - 128) - 0.71313*(Cr - 128);
+    a = Y - 0.34414*(Cb - 128) - 0.71313*(Cr - 128); //Y Cr
     a = (a<0)?0:a;
     a = (a>255)?255:a;
     rgb.G = (uint8_t) round(a);
@@ -46,7 +46,8 @@ RGB **ycbcr_to_gris(float **tab, uint16_t horizontal, uint16_t vertical){
 
 /* Copie un tableau (small) dans un plus grand tableau (big) en démarrant par
 le coin en haut à de coordonées (x, y) */
-void write_big_rgb(RGB **big, int x, int y, RGB ** small, int lignes, int colonnes){
+void write_big_rgb(RGB **big, int x, int y, RGB ** small, int lignes,
+                                                          int colonnes){
     for(int i =y;i<(y+lignes);i++){
         for(int j =x;j<(x+colonnes);j++){
             big[i][j] = small[i-y][j-x];
