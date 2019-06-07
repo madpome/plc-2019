@@ -48,7 +48,7 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
   read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
   bits = 0;
-  uint8_t *res=malloc(64*sizeof(uint8_t));
+  uint8_t *res = malloc(64*sizeof(uint8_t));
   while (longueur != 0){
     read_bitstream(stream, 4, &bits, 0);
     uint8_t precision = bits;
@@ -63,7 +63,7 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
     longueur--;
 
     free(tables[indice]);
-    
+
     int i = 0;
     while (i<64){
       read_bitstream(stream, 8, &bits, 0);
@@ -132,7 +132,7 @@ void parse_SOF0(struct bitstream *stream, struct donnees *donnees){
   donnees->composantes = tab_comp;
 }
 
-void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur){
+void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur,uint8_t *taille_AC,uint8_t *taille_DC){
   uint32_t bits = 0;
   read_bitstream(stream, 16, &bits, 0);
   uint32_t longueur = bits - 2;
@@ -154,10 +154,14 @@ void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct hu
     longueur--;
     struct huff_table *table = load_huffman_table(stream, &bits_lus);
     if (type){
+      free(table_AC[indice]);
       table_AC[indice] = table;
+      *taille_AC+=1;
     }
     else{
+      free(table_DC[indice]);
       table_DC[indice] = table;
+      *taille_DC+=1;
     }
     longueur-=bits_lus;
     *compteur+=1;
@@ -215,9 +219,11 @@ struct jpeg_desc *read_jpeg(const char *filename){
   uint32_t bits = 0;
   uint8_t compteur_q = 0;
   uint8_t compteur_h = 0;
-  uint8_t **tables = malloc(4*sizeof(uint8_t *));
-  struct huff_table **table_AC = malloc(4*sizeof(struct huff_table *));
-  struct huff_table **table_DC = malloc(4*sizeof(struct huff_table *));
+  jpeg->taille_AC = 0;
+  jpeg->taille_DC = 0;
+  uint8_t **tables = calloc(4, sizeof(uint8_t *));
+  struct huff_table **table_AC = calloc(4, sizeof(struct huff_table *));
+  struct huff_table **table_DC = calloc(4, sizeof(struct huff_table *));
   struct donnees *donnees = malloc(sizeof(struct donnees));
   struct bitstream **image = malloc(sizeof(struct bitstream *));
 
@@ -243,7 +249,7 @@ struct jpeg_desc *read_jpeg(const char *filename){
       break;
     }
     case 0xffc4:{
-      parse_DHT(stream, table_AC, table_DC,&compteur_h);
+      parse_DHT(stream, table_AC, table_DC,&compteur_h,&jpeg->taille_AC,&jpeg->taille_DC);
       jpeg->table_AC = table_AC;
       jpeg->table_DC = table_DC;
       break;
@@ -343,15 +349,12 @@ void close_jpeg(struct jpeg_desc *jpeg){
   free(jpeg->donnees->composantes);
   free(jpeg->donnees);
 
-  int taille_ac = sizeof(jpeg->table_AC)/sizeof(struct huff_table *);
-  int taille_dc = sizeof(jpeg->table_DC)/sizeof(struct huff_table *);
-
-  for (int i =0; i<taille_ac; i++){
+  for (int i =0; i<jpeg->taille_AC; i++){
     free_huffman_table(jpeg->table_AC[i]);
   }
   free(jpeg->table_AC);
 
-  for (int i=0; i<taille_dc;i++){
+  for (int i=0; i<jpeg->taille_DC;i++){
     free_huffman_table(jpeg->table_DC[i]);
   }
   free(jpeg->table_DC);

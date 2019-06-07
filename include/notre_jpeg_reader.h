@@ -50,7 +50,9 @@ struct jpeg_desc{
   uint8_t **tables_quantification;
   struct donnees *donnees;
   uint8_t nb_huff_table;
+  uint8_t taille_AC;
   struct huff_table **table_AC;
+  uint8_t taille_DC;
   struct huff_table **table_DC;
   struct bitstream **image;
   char *filename;
@@ -93,7 +95,7 @@ void parse_com(struct bitstream *stream);
 
 void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur);
 
-void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur);
+void parse_DHT(struct bitstream *stream, struct huff_table **table_AC, struct huff_table **table_DC,uint8_t *compteur,uint8_t *taille_AC, uint8_t *taille_DC);
 
 void parse_SOF0(struct bitstream *stream, struct donnees *donnees);
 
