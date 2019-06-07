@@ -29,6 +29,8 @@ void parse_APP0(struct bitstream *stream){
         i++;
     }
     longueur -= 7;
+
+    // Donnéees non traitées
     while (longueur != 0){
         read_bitstream(stream, 8, &bits, 0);
         longueur--;
@@ -43,6 +45,7 @@ void parse_com(struct bitstream *stream){
     uint32_t longueur = bits - 2;
     bits = 0;
 
+    // Commentaires de l'image
     while (longueur != 0){
         read_bitstream(stream, 8, &bits, 0);
         longueur--;
@@ -58,6 +61,8 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
     bits = 0;
     uint8_t *res = malloc(64*sizeof(uint8_t));
     while (longueur != 0){
+
+        // Précision
         read_bitstream(stream, 4, &bits, 0);
         uint8_t precision = bits;
         if (precision == 1){
@@ -65,6 +70,8 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
             exit(0);
         }
         bits = 0;
+
+        // Indice
         read_bitstream(stream, 4, &bits, 0);
         uint32_t indice = bits;
         bits = 0;
@@ -72,7 +79,7 @@ void parse_dqt(struct bitstream *stream,uint8_t **tables, uint8_t *compteur){
 
         free(tables[indice]);
 
-        // On lit toute la table
+        // Lecture de la table de quantification
         int i = 0;
         while (i<64){
             read_bitstream(stream, 8, &bits, 0);
@@ -116,6 +123,7 @@ void parse_SOF0(struct bitstream *stream, struct donnees *donnees){
     struct composante *tab_comp = malloc(donnees->nb_composantes \
                                          *sizeof(struct composante));
 
+    // Lecture du facteur d'échantillonage pour chaque composante
     for (uint32_t i =0; i<donnees->nb_composantes; i++){
         struct composante comp;
         read_bitstream(stream, 8, &bits, 0);
@@ -154,14 +162,16 @@ void parse_DHT(struct bitstream *stream, struct huff_table **table_AC,
     bits = 0;
     uint16_t bits_lus;
 
-    // Lecture de la talbe de huffman
+    // Lecture de la table de huffman
     while (longueur != 0){
+
+        // Bits qui valent 0
         read_bitstream(stream, 3, &bits, 0);
         if (bits != 0){
             fprintf(stderr, "Error reading huffman\n");
             exit(0);
         }
-
+        // Type DC / AC
         read_bitstream(stream, 1, &bits, 0);
         uint8_t type = bits;
         bits =0;
@@ -204,6 +214,7 @@ void parse_SOS(struct bitstream *stream, struct bitstream **image,
     bits = 0;
     longueur--;
 
+    // Lecture des indices de Huffman pour chaque composante
     for (int i =0; i<donnees->nb_composantes;i++){
         read_bitstream(stream, 8, &bits,0);
         uint8_t id = bits;
@@ -225,6 +236,7 @@ void parse_SOS(struct bitstream *stream, struct bitstream **image,
             }
         }
     }
+    // Utile au mode progressif donc pas utile ici
     read_bitstream(stream, 24, &bits, 0);
     bits = 0;
     *image = stream;
@@ -233,7 +245,10 @@ void parse_SOS(struct bitstream *stream, struct bitstream **image,
 
 /* Lit l'entète en fonction des marqueur et renvoie le stream associé à l'image */
 struct jpeg_desc *read_jpeg(const char *filename){
+
     struct jpeg_desc *jpeg = malloc(sizeof(struct jpeg_desc));
+
+    // Initialisation du jpeg
     jpeg->filename = dup(filename);
     struct bitstream *stream = create_bitstream(filename);
     uint16_t marqueur = 0;
@@ -243,23 +258,29 @@ struct jpeg_desc *read_jpeg(const char *filename){
     uint8_t compteur_h = 0;
     jpeg->taille_AC = 0;
     jpeg->taille_DC = 0;
+
     uint8_t **tables = calloc(4, sizeof(uint8_t *));
     struct huff_table **table_AC = calloc(4, sizeof(struct huff_table *));
     struct huff_table **table_DC = calloc(4, sizeof(struct huff_table *));
     struct donnees *donnees = malloc(sizeof(struct donnees));
     struct bitstream **image = malloc(sizeof(struct bitstream *));
 
+    // On lit le token de début d'image
     read_bitstream(stream, 16, &bits, 0);
     if (bits != 0xffd8){
         fprintf(stderr,"Error reading Start of Image\n");
         exit(0);
     }
+
+    // flag = fin de l'entête
     while (!flag){
+
+        // On lit un marqueur sur 2 octets
         read_bitstream(stream, 16, &bits, 0);
         marqueur = bits;
         bits = 0;
 
-        // On switch en fonctiuon du marqueur lu
+        // On switch en fonction du marqueur lu
         switch(marqueur){
             case 0xffe0:
                 parse_APP0(stream);

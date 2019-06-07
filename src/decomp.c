@@ -86,7 +86,8 @@ struct symbole_AC trad_AC(struct bitstream *stream, struct jpeg_desc *jpeg,
       	}
   	}
   	uint16_t indice = get_indice(stream, magnitude);
-  	struct symbole_AC retour = {0,nb_zeros, valeur_magnitude(magnitude, indice)};
+  	struct symbole_AC retour = {0, nb_zeros,
+																valeur_magnitude(magnitude, indice)};
   	return retour;
 }
 
